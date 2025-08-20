@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tang.café</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root {
+  --bg: linear-gradient(135deg,#f5f7fa,#c3cfe2);
+  --text: #111;
+  --card-bg: rgba(255,255,255,0.9);
+  --card-shadow: rgba(0,0,0,0.1);
+  --accent: #485664;
+  --highlight: #ffd54f;
+  --skeleton-bg: #ddd;
+}
+[data-theme="dark"] {
+  --bg: linear-gradient(135deg,#1e1e1e,#2c2c2c);
+  --text: #eee;
+  --card-bg: rgba(30,30,30,0.85);
+  --card-shadow: rgba(0,0,0,0.6);
+  --accent: #4da6ff;
+  --highlight: #ffab40;
+  --skeleton-bg: #333;
+}
+body {margin:0; padding:20px; font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--text); transition: background 0.3s,color 0.3s;}
+header{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; margin-bottom:30px;}
+header h1{margin:0;font-size:28px;display:flex;align-items:center;gap:10px;}
+.header-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+input#searchInput{padding:6px 12px;border-radius:5px;border:0px solid var(--text);outline:none;width:200px;background:var(--card-bg);color:var(--text);}
+button{cursor:pointer;padding:6px 12px;border-radius:6px;border:0px solid var(--text);background:var(--card-bg);backdrop-filter:blur(5px);display:flex;align-items:center;gap:5px;color:var(--text);}
+.post{background:var(--card-bg);padding:15px;border-radius:16px;box-shadow:0 6px 16px var(--card-shadow);margin-bottom:20px;opacity:0;transform:translateY(20px);transition:all 0.6s;color:var(--text);}
+.post.visible{opacity:1; transform:translateY(0);}
+.post-title{font-weight:bold;cursor:pointer;font-size:20px;margin-bottom:8px;color:var(--accent);display:flex;align-items:center;gap:6px;}
+.post-date{font-size:13px;color:#888;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.post-summary{font-size:15px;line-height:1.6;color:var(--text);}
+mark{background-color:var(--highlight);color:inherit;padding:0 2px;border-radius:2px;}
+.skeleton{background: var(--skeleton-bg); border-radius: 12px; margin-bottom:12px; position: relative; overflow: hidden;}
+.skeleton::before{
+  content:""; display:block; position:absolute; top:0; left:-150px; height:100%; width:150px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation:skeleton-loading 1.2s infinite;
+}
+@keyframes skeleton-loading{0%{left:-150px;}100%{left:100%;}}
+#loading{text-align:center;margin-top:15px;font-size:14px;color:var(--accent);}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  body{padding:12px;}
+  header{flex-direction:column;align-items:flex-start;gap:10px;}
+  .header-controls{flex-wrap:wrap;gap:8px;width:100%;}
+  input#searchInput{width:calc(100% - 100px);}
+  button{font-size:14px;padding:5px 10px;}
+  .post{padding:12px;border-radius:12px;}
+  .post-title{font-size:18px;}
+  .post-summary{font-size:14px;}
+  #loading{font-size:13px;}
+}
+</style>
+</head>
+<body data-theme="light">
+<header>
+<h1><i class="bi bi-cup-hot"></i>Tang.café</h1>
+<div class="header-controls">
+<input id="searchInput" type="text" placeholder="搜索文章..." />
+<button id="searchBtn"><i class="bi bi-search"></i>搜索</button>
+<button class="toggle"><i class="bi bi-moon-stars"></i> 暗黑模式</button>
+</div>
+</header>
+
+<div id="posts"></div>
+<div id="loading">加载中...</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+let currentPage=1, pageSize=10, currentKeyword='';
+const postsContainer=document.getElementById('posts');
+const loadingDiv=document.getElementById('loading');
+
+// ====== 主题持久化 & 图标文字同步 ======
+function updateThemeUI(theme){
+  document.body.setAttribute('data-theme',theme);
+  document.querySelectorAll('.toggle').forEach(btn=>{
+    if(theme==='dark'){
+      btn.innerHTML='<i class="bi bi-sun-fill"></i> 浅色模式';
+    }else{
+      btn.innerHTML='<i class="bi bi-moon-stars"></i> 暗黑模式';
+    }
+  });
+}
+function loadTheme(){
+  const savedTheme=localStorage.getItem('theme') || 'light';
+  updateThemeUI(savedTheme);
+}
+loadTheme();
+document.querySelectorAll('.toggle').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const current=document.body.getAttribute('data-theme')==='dark'?'light':'dark';
+    updateThemeUI(current);
+    localStorage.setItem('theme',current);
+  });
+});
+
+// ====== 工具函数 ======
+function highlightKeyword(text,keyword){
+  if(!keyword) return text;
+  const regex=new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');
+  return text.replace(regex,'<mark>$1</mark>');
+}
+function extractSummary(text){
+  return text.replace(/!\[.*?\]\(.*?\)/g,'').slice(0,140);
+}
+function showSkeleton(count=3){
+  for(let i=0;i<count;i++){
+    const sk=document.createElement('div');
+    sk.className='post visible';
+    sk.innerHTML=`
+      <div class="skeleton" style="height:20px;width:60%;margin-bottom:8px;"></div>
+      <div class="skeleton" style="height:14px;width:30%;margin-bottom:12px;"></div>
+      <div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div>
+      <div class="skeleton" style="height:16px;width:90%;margin-bottom:6px;"></div>
+      <div class="skeleton" style="height:16px;width:80%;margin-bottom:6px;"></div>
+    `;
+    postsContainer.appendChild(sk);
+  }
+}
+
+// ====== 加载文章 ======
+async function loadPosts(keyword='') {
+  showSkeleton();
+  loadingDiv.style.display='block';
+  try {
+    const res = await fetch(`https://shrill-brook-3a83.opstmj.workers.dev/api/v1?pagenum=${currentPage}&pageSize=${pageSize}&keyword=${encodeURIComponent(keyword)}`);
+    const data = await res.json();
+    loadingDiv.style.display='none';
+    document.querySelectorAll('.skeleton').forEach(s=>s.parentNode.remove());
+
+    if (data.success && data.data && data.data.length>0) {
+      data.data.forEach((post,index)=>{
+        const div=document.createElement('div');
+        div.className='post';
+        div.style.transitionDelay=`${index*100}ms`;
+        div.innerHTML=`
+          <div class="post-title" onclick="window.location.href='post.html?id=${post.填写ID}&keyword=${encodeURIComponent(keyword)}'">
+            <i class="bi bi-file-earmark-text"></i> ${highlightKeyword(post.标题,keyword)}
+          </div>
+          <div class="post-date"><i class="bi bi-clock"></i> ${new Date(post.日期).toLocaleDateString()}</div>
+          <div class="post-summary">${highlightKeyword(extractSummary(post.文章内容),keyword)}...</div>
+        `;
+        postsContainer.appendChild(div);
+        setTimeout(()=>div.classList.add('visible'),50);
+      });
+      currentPage++;
+    } else if (currentPage===1) {
+      postsContainer.innerHTML='<p>未找到相关文章</p>';
+    }
+  } catch(e){
+    loadingDiv.style.display='none';
+    alert('加载失败，请稍后重试');
+  }
+}
+
+// ====== 搜索 ======
+function doSearch(){
+  postsContainer.innerHTML='';
+  currentPage=1;
+  currentKeyword=document.getElementById('searchInput').value.trim();
+  loadPosts(currentKeyword);
+}
+document.getElementById('searchBtn').addEventListener('click',doSearch);
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter') doSearch();});
+
+// ====== 无限滚动 ======
+window.addEventListener('scroll',()=>{
+  if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 50){
+    loadPosts(currentKeyword);
+  }
+});
+
+loadPosts();
+</script>
+</body>
+</html>
