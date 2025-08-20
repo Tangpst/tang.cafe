@@ -14,6 +14,7 @@
   --accent: #485664;
   --highlight: #ffd54f;
   --skeleton-bg: #ddd;
+  --hover-shadow: rgba(0,0,0,0.15);
 }
 [data-theme="dark"] {
   --bg: linear-gradient(135deg,#1e1e1e,#2c2c2c);
@@ -21,62 +22,252 @@
   --card-bg: rgba(30,30,30,0.85);
   --card-shadow: rgba(0,0,0,0.6);
   --accent: #4da6ff;
-  --highlight: #ffab40;
+  --highlight: #ff4040;
   --skeleton-bg: #333;
+  --hover-shadow: rgba(0,0,0,0.8);
 }
-body {margin:0; padding:20px; font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--text); transition: background 0.3s,color 0.3s;}
-header{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; margin-bottom:30px;}
-header h1{margin:0;font-size:28px;display:flex;align-items:center;gap:10px;}
-.header-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-input#searchInput{padding:6px 12px;border-radius:5px;border:0px solid var(--text);outline:none;width:200px;background:var(--card-bg);color:var(--text);}
-button{cursor:pointer;padding:6px 12px;border-radius:6px;border:0px solid var(--text);background:var(--card-bg);backdrop-filter:blur(5px);display:flex;align-items:center;gap:5px;color:var(--text);}
-.post{background:var(--card-bg);padding:15px;border-radius:16px;box-shadow:0 6px 16px var(--card-shadow);margin-bottom:20px;opacity:0;transform:translateY(20px);transition:all 0.6s;color:var(--text);}
-.post.visible{opacity:1; transform:translateY(0);}
-.post-title{font-weight:bold;cursor:pointer;font-size:20px;margin-bottom:8px;color:var(--accent);display:flex;align-items:center;gap:6px;}
-.post-date{font-size:13px;color:#888;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
-.post-summary{font-size:15px;line-height:1.6;color:var(--text);}
-mark{background-color:var(--highlight);color:inherit;padding:0 2px;border-radius:2px;}
-.skeleton{background: var(--skeleton-bg); border-radius: 12px; margin-bottom:12px; position: relative; overflow: hidden;}
-.skeleton::before{
-  content:""; display:block; position:absolute; top:0; left:-150px; height:100%; width:150px;
+body {
+  margin:0; 
+  padding:20px; 
+  font-family:'Segoe UI',Arial,sans-serif; 
+  background:var(--bg); 
+  color:var(--text); 
+  transition: background 0.3s,color 0.3s;
+}
+header {
+  display:flex; 
+  flex-wrap:wrap; 
+  justify-content:space-between; 
+  align-items:center; 
+  margin-bottom:30px;
+}
+header h1 {
+  margin:0;
+  font-size:28px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink: 0;
+}
+.header-controls {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+input#searchInput {
+  padding:6px 12px;
+  border-radius:5px;
+  border:0px solid var(--text);
+  outline:none;
+  width:200px;
+  background:var(--card-bg);
+  color:var(--text);
+  transition: all 0.3s ease;
+}
+button {
+  cursor:pointer;
+  padding:6px 12px;
+  border-radius:6px;
+  border:0px solid var(--text);
+  background:var(--card-bg);
+  backdrop-filter:blur(5px);
+  display:flex;
+  align-items:center;
+  gap:5px;
+  color:var(--text);
+  transition: all 0.3s ease;
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px var(--hover-shadow);
+}
+.post {
+  background:var(--card-bg);
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 6px 16px var(--card-shadow);
+  margin-bottom:25px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:all 0.5s ease;
+  color:var(--text);
+  position: relative;
+  overflow: hidden;
+  will-change: transform, box-shadow;
+}
+.post.visible {
+  opacity:1; 
+  transform:translateY(0);
+}
+.post:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px var(--hover-shadow);
+}
+.post::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.post:hover::before {
+  transform: scaleX(1);
+}
+.post-title {
+  font-weight:bold;
+  cursor:pointer;
+  font-size:20px;
+  margin-bottom:8px;
+  color:var(--accent);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition: all 0.3s ease;
+}
+.post-title:hover {
+  color: var(--highlight);
+}
+.post-date {
+  font-size:13px;
+  color:#888;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.post-summary {
+  font-size:15px;
+  line-height:1.6;
+  color:var(--text);
+}
+mark {
+  background-color:var(--highlight);
+  color:inherit;
+  padding:0 2px;
+  border-radius:2px;
+}
+.skeleton {
+  background: var(--skeleton-bg); 
+  border-radius: 12px; 
+  margin-bottom:12px; 
+  position: relative; 
+  overflow: hidden;
+}
+.skeleton::before {
+  content:""; 
+  display:block; 
+  position:absolute; 
+  top:0; 
+  left:-150px; 
+  height:100%; 
+  width:150px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
   animation:skeleton-loading 1.2s infinite;
 }
-@keyframes skeleton-loading{0%{left:-150px;}100%{left:100%;}}
-#loading{text-align:center;margin-top:15px;font-size:14px;color:var(--accent);}
+@keyframes skeleton-loading {
+  0%{left:-150px;}
+  100%{left:100%;}
+}
+#loading {
+  text-align:center;
+  margin-top:15px;
+  font-size:14px;
+  color:var(--accent);
+}
+.end-of-content {
+  text-align:center;
+  padding:20px;
+  color:var(--text);
+  font-style: italic;
+}
 
-/* ===== 响应式 ===== */
+/* ===== 响应式布局优化 ===== */
 @media (max-width: 768px) {
-  body{padding:12px;}
-  header{flex-direction:column;align-items:flex-start;gap:10px;}
-  .header-controls{flex-wrap:wrap;gap:8px;width:100%;}
-  input#searchInput{width:calc(100% - 100px);}
-  button{font-size:14px;padding:5px 10px;}
-  .post{padding:12px;border-radius:12px;}
-  .post-title{font-size:18px;}
-  .post-summary{font-size:14px;}
-  #loading{font-size:13px;}
+  body {
+    padding:15px;
+  }
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .header-controls {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+  }
+  input#searchInput {
+    width: 100%;
+    grid-column: 1 / span 3;
+    order: 1;
+  }
+  #searchBtn {
+    order: 2;
+    width: 100%;
+  }
+  .toggle {
+    order: 3;
+    width: 100%;
+  }
+  .post {
+    padding:18px;
+    border-radius:14px;
+    margin-bottom:20px;
+  }
+  .post-title {
+    font-size:18px;
+  }
+  .post-summary {
+    font-size:14px;
+  }
+  #loading {
+    font-size:13px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 24px;
+  }
+  .header-controls {
+    grid-template-columns: 1fr;
+  }
+  input#searchInput {
+    grid-column: 1;
+  }
+  button {
+    padding: 8px 10px;
+    justify-content: center;
+  }
 }
 </style>
 </head>
 <body data-theme="light">
 <header>
-<h1><i class="bi bi-cup-hot"></i>Tang.café</h1>
-<div class="header-controls">
-<input id="searchInput" type="text" placeholder="搜索文章..." />
-<button id="searchBtn"><i class="bi bi-search"></i>搜索</button>
-<button class="toggle"><i class="bi bi-moon-stars"></i> 暗黑模式</button>
-</div>
+  <h1><i class="bi bi-cup-hot"></i>Tang.café</h1>
+  <div class="header-controls">
+    <input id="searchInput" type="text" placeholder="搜索文章..." />
+    <button id="searchBtn"><i class="bi bi-search"></i>搜索</button>
+    <button class="toggle"><i class="bi bi-moon-stars"></i> 暗黑模式</button>
+  </div>
 </header>
 
 <div id="posts"></div>
 <div id="loading">加载中...</div>
+<div id="endOfContent" class="end-of-content" style="display:none;">木有内容了</div>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-let currentPage=1, pageSize=10, currentKeyword='';
+let currentPage=1, pageSize=10, currentKeyword='', hasMore=true;
 const postsContainer=document.getElementById('posts');
 const loadingDiv=document.getElementById('loading');
+const endOfContentDiv=document.getElementById('endOfContent');
 
 // ====== 主题持久化 & 图标文字同步 ======
 function updateThemeUI(theme){
@@ -108,9 +299,29 @@ function highlightKeyword(text,keyword){
   const regex=new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');
   return text.replace(regex,'<mark>$1</mark>');
 }
+
+// 改进的摘要提取函数 - 彻底移除所有媒体内容
 function extractSummary(text){
-  return text.replace(/!\[.*?\]\(.*?\)/g,'').slice(0,140);
+  // 创建临时元素用于解析HTML
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = text;
+  
+  // 移除所有媒体元素
+  tempDiv.querySelectorAll('img, video, audio, iframe, picture, source, track').forEach(el => el.remove());
+  
+  // 获取纯文本内容
+  let cleanText = tempDiv.textContent || tempDiv.innerText || '';
+  
+  // 额外处理Markdown图片语法
+  cleanText = cleanText.replace(/!\[.*?\]\(.*?\)/g, '');
+  
+  // 移除多余空格和换行
+  cleanText = cleanText.replace(/\s+/g, ' ').trim();
+  
+  return cleanText.slice(0, 140);
 }
+
+
 function showSkeleton(count=3){
   for(let i=0;i<count;i++){
     const sk=document.createElement('div');
@@ -128,8 +339,12 @@ function showSkeleton(count=3){
 
 // ====== 加载文章 ======
 async function loadPosts(keyword='') {
+  if (!hasMore) return;
+  
   showSkeleton();
   loadingDiv.style.display='block';
+  endOfContentDiv.style.display='none';
+  
   try {
     const res = await fetch(`https://api.tang.cafe/api/v1?pagenum=${currentPage}&pageSize=${pageSize}&keyword=${encodeURIComponent(keyword)}`);
     const data = await res.json();
@@ -151,9 +366,20 @@ async function loadPosts(keyword='') {
         postsContainer.appendChild(div);
         setTimeout(()=>div.classList.add('visible'),50);
       });
+      
+      // 检查是否还有更多数据
+      if (data.data.length < pageSize) {
+        hasMore = false;
+        endOfContentDiv.style.display = 'block';
+      }
+      
       currentPage++;
     } else if (currentPage===1) {
       postsContainer.innerHTML='<p>未找到相关文章</p>';
+      hasMore = false;
+    } else {
+      hasMore = false;
+      endOfContentDiv.style.display = 'block';
     }
   } catch(e){
     loadingDiv.style.display='none';
@@ -165,7 +391,9 @@ async function loadPosts(keyword='') {
 function doSearch(){
   postsContainer.innerHTML='';
   currentPage=1;
+  hasMore = true;
   currentKeyword=document.getElementById('searchInput').value.trim();
+  endOfContentDiv.style.display = 'none';
   loadPosts(currentKeyword);
 }
 document.getElementById('searchBtn').addEventListener('click',doSearch);
@@ -173,7 +401,7 @@ document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==
 
 // ====== 无限滚动 ======
 window.addEventListener('scroll',()=>{
-  if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 50){
+  if(hasMore && window.innerHeight + window.scrollY >= document.body.offsetHeight - 50){
     loadPosts(currentKeyword);
   }
 });
