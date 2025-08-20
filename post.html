@@ -13,6 +13,8 @@
   --card-shadow:rgba(0,0,0,0.1);
   --accent:#007bff;
   --highlight:#ffd54f;
+  --blockquote-bg:#f9f9f9;
+  --blockquote-text:#555;
 }
 [data-theme="dark"]{
   --bg:linear-gradient(135deg,#1e1e1e,#2c2c2c);
@@ -21,6 +23,8 @@
   --card-shadow:rgba(0,0,0,0.6);
   --accent:#4da6ff;
   --highlight:#ffab40;
+  --blockquote-bg:#2a2a2a;
+  --blockquote-text:#ccc;
 }
 body{
   background:var(--bg);
@@ -37,6 +41,7 @@ header{
   margin-bottom:30px;
   flex-wrap:wrap;
 }
+header .header-left{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 header button{
   cursor:pointer;
   padding:6px 12px;
@@ -60,8 +65,6 @@ article{
   color:var(--text);
   overflow:hidden;
 }
-
-/* Markdown 美化 */
 article h1,article h2,article h3,article h4{
   margin:20px 0 12px;
   font-weight:600;
@@ -72,8 +75,8 @@ article a:hover{text-decoration:underline;}
 article blockquote{
   border-left:4px solid var(--accent);
   padding-left:12px;
-  color:var(--text);
-  background:#f9f9f9;
+  color:var(--blockquote-text);
+  background:var(--blockquote-bg);
   border-radius:6px;
   margin:15px 0;
 }
@@ -86,8 +89,6 @@ article pre, article code{
   color:var(--accent);
 }
 article pre{padding:14px;}
-
-/* 图片样式 */
 article img{
   width:80%;
   max-width:600px;
@@ -98,8 +99,6 @@ article img{
   opacity:0;
   transition:opacity 0.5s, transform 0.3s;
 }
-
-/* Lightbox 单图显示 */
 #lightbox{
   position:fixed;
   top:0;left:0;right:0;bottom:0;
@@ -127,8 +126,6 @@ article img{
 #lightbox.show img{
   transform:scale(1);
 }
-
-/* skeleton */
 .skeleton{background:#ddd;border-radius:12px;margin-bottom:12px;height:16px;position:relative;overflow:hidden;}
 .skeleton::before{content:""; display:block; position:absolute; top:0; left:-150px; height:100%; width:150px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation:skeleton-loading 1.2s infinite;}
 @keyframes skeleton-loading{0%{left:-150px;}100%{left:100%;}}
@@ -137,11 +134,11 @@ article img{
 </head>
 <body data-theme="light">
 <header>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+  <div class="header-left">
     <button onclick="window.history.back()"><i class="bi bi-arrow-left-circle"></i> 返回</button>
-    <button class="toggle"><i class="bi bi-moon-stars"></i> 暗黑模式</button>
   </div>
-  <h1><i class="bi bi-journal-text"></i> 文章详情</h1>
+  <h1 id="pageTitle"><i class="bi bi-journal-text"></i> 文章详情</h1>
+  <button class="toggle"><i class="bi bi-moon-stars"></i> 暗黑模式</button>
 </header>
 
 <article id="postContent">
@@ -152,7 +149,6 @@ article img{
   <div class="skeleton" style="width:80%;height:16px;margin-bottom:6px;"></div>
 </article>
 
-<!-- Lightbox -->
 <div id="lightbox"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -195,7 +191,11 @@ async function loadPost(){
         <div class="markdown-body">${highlightKeyword(marked.parse(post.文章内容),keyword)}</div>
       `;
 
-      // 图片懒加载 + 点击打开 Lightbox
+      // 设置页面标题
+      document.title = post.标题;
+      document.getElementById('pageTitle').innerHTML = `<i class="bi bi-journal-text"></i> ${post.标题}`;
+
+      // 图片懒加载 + Lightbox
       const imgs = articleEl.querySelectorAll("img");
       const lightbox = document.getElementById("lightbox");
       imgs.forEach(img=>{
