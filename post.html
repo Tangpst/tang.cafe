@@ -69,7 +69,6 @@ article{
   color:var(--text);
   overflow:hidden;
 }
-
 /* Markdown 美化 */
 article h1,article h2,article h3,article h4{
   margin:20px 0 12px;
@@ -95,7 +94,6 @@ article pre, article code{
   color:var(--accent);
 }
 article pre{padding:14px;}
-
 /* 图片增强 */
 article img{
   max-width:100%;
@@ -121,12 +119,37 @@ article img:hover{transform:scale(1.03);}
 }
 #lightbox:target{display:flex;}
 
-h1{font-size:28px;margin-bottom:15px;display:flex;align-items:center;gap:8px;}
-.post-date{font-size:13px;color:#888;margin-bottom:20px;display:flex;align-items:center;gap:5px;}
+/* skeleton */
 mark{background-color:var(--highlight);color:inherit;padding:0 2px;border-radius:2px;}
 .skeleton{background: var(--skeleton-bg); border-radius: 12px; margin-bottom:12px; position: relative; overflow: hidden; height:16px;}
 .skeleton::before{content:""; display:block; position:absolute; top:0; left:-150px; height:100%; width:150px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation:skeleton-loading 1.2s infinite;}
 @keyframes skeleton-loading{0%{left:-150px;}100%{left:100%;}}
+
+/* 图片画廊 */
+.image-gallery {
+  display:flex;
+  overflow-x:auto;
+  gap:12px;
+  padding:10px 0;
+  scroll-snap-type:x mandatory;
+}
+.image-gallery img {
+  flex:0 0 auto;
+  height:220px;
+  border-radius:12px;
+  object-fit:cover;
+  cursor:zoom-in;
+  transition:transform 0.3s, opacity 0.5s;
+  scroll-snap-align:start;
+  opacity:0;
+}
+.image-gallery img.visible{
+  opacity:1;
+  transform:scale(1);
+}
+.image-gallery img:hover{transform:scale(1.05);}
+.image-gallery::-webkit-scrollbar{height:6px;}
+.image-gallery::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px;}
 
 /* 响应式 */
 @media (max-width: 768px) {
@@ -137,6 +160,8 @@ mark{background-color:var(--highlight);color:inherit;padding:0 2px;border-radius
   article h1{font-size:22px;}
   .post-date{font-size:12px;}
 }
+h1{font-size:28px;margin-bottom:15px;display:flex;align-items:center;gap:8px;}
+.post-date{font-size:13px;color:#888;margin-bottom:20px;display:flex;align-items:center;gap:5px;}
 </style>
 </head>
 <body data-theme="light">
@@ -156,7 +181,6 @@ mark{background-color:var(--highlight);color:inherit;padding:0 2px;border-radius
   <div class="skeleton" style="width:80%;height:16px;margin-bottom:6px;"></div>
 </article>
 
-<!-- 图片灯箱 -->
 <div id="lightbox"><img src="" alt=""></div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -207,14 +231,39 @@ async function loadPost(){
         <div class="markdown-body">${highlightKeyword(marked.parse(post.文章内容),keyword)}</div>
       `;
 
-      // 图片点击预览
-      articleEl.querySelectorAll("img").forEach(img=>{
-        img.addEventListener("click",()=>{
-          const lightbox=document.getElementById("lightbox");
-          lightbox.style.display="flex";
-          lightbox.querySelector("img").src=img.src;
+      // 图片处理
+      const images = articleEl.querySelectorAll("img");
+      if(images.length>0){
+        const gallery = document.createElement("div");
+        gallery.className = "image-gallery";
+        images.forEach(img=>{
+          img.loading="lazy";
+          gallery.appendChild(img);
         });
-      });
+        articleEl.querySelectorAll("img").forEach(i=>i.remove());
+        articleEl.appendChild(gallery);
+
+        // 懒加载动画
+        const observer = new IntersectionObserver(entries=>{
+          entries.forEach(entry=>{
+            if(entry.isIntersecting){
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },{threshold:0.1});
+        gallery.querySelectorAll("img").forEach(img=>observer.observe(img));
+
+        // 点击灯箱
+        gallery.querySelectorAll("img").forEach(img=>{
+          img.addEventListener("click",()=>{
+            const lightbox=document.getElementById("lightbox");
+            lightbox.style.display="flex";
+            lightbox.querySelector("img").src=img.src;
+          });
+        });
+      }
+
       document.getElementById("lightbox").addEventListener("click",()=>{
         document.getElementById("lightbox").style.display="none";
       });
