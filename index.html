@@ -131,7 +131,7 @@ async function loadPosts(keyword='') {
   showSkeleton();
   loadingDiv.style.display='block';
   try {
-    const res = await fetch(`https://shrill-brook-3a83.opstmj.workers.dev/api/v1?pagenum=${currentPage}&pageSize=${pageSize}&keyword=${encodeURIComponent(keyword)}`);
+    const res = await fetch(`https://api.tang.cafe/api/v1?pagenum=${currentPage}&pageSize=${pageSize}&keyword=${encodeURIComponent(keyword)}`);
     const data = await res.json();
     loadingDiv.style.display='none';
     document.querySelectorAll('.skeleton').forEach(s=>s.parentNode.remove());
