@@ -13,8 +13,6 @@
   --card-shadow:rgba(0,0,0,0.1);
   --accent:#007bff;
   --highlight:#ffd54f;
-  --skeleton-bg:#ddd;
-  --link:#0066cc;
 }
 [data-theme="dark"]{
   --bg:linear-gradient(135deg,#1e1e1e,#2c2c2c);
@@ -23,46 +21,114 @@
   --card-shadow:rgba(0,0,0,0.6);
   --accent:#4da6ff;
   --highlight:#ffab40;
-  --skeleton-bg:#333;
-  --link:#4da6ff;
 }
 body{
-  background:var(--bg); color:var(--text); font-family:'Segoe UI',Arial,sans-serif;
-  margin:0;padding:20px;transition:background 0.3s,color 0.3s;line-height:1.75;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Segoe UI',Arial,sans-serif;
+  margin:0;padding:20px;
+  transition:background 0.3s,color 0.3s;
+  line-height:1.75;
 }
 header{
-  display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;gap:10px;flex-wrap:wrap;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+  flex-wrap:wrap;
 }
 header button{
-  cursor:pointer;padding:6px 12px;border-radius:6px;border:0; background:var(--card-bg);backdrop-filter:blur(5px);
-  display:flex;align-items:center;gap:5px;color:var(--text);transition:all 0.3s;
+  cursor:pointer;
+  padding:6px 12px;
+  border-radius:6px;
+  border:0px solid var(--text);
+  background:var(--card-bg);
+  backdrop-filter:blur(5px);
+  display:flex;align-items:center;gap:5px;
+  color:var(--text);
+  transition:all 0.3s;
 }
-header button:hover{background:var(--accent);color:#fff;}
+header button:hover{
+  background:var(--accent);
+  color:#fff;
+}
 article{
-  background:var(--card-bg);padding:30px;border-radius:16px;box-shadow:0 6px 16px var(--card-shadow);
-  color:var(--text);overflow:hidden;
+  background:var(--card-bg);
+  padding:30px;
+  border-radius:16px;
+  box-shadow:0 6px 16px var(--card-shadow);
+  color:var(--text);
+  overflow:hidden;
 }
-article h1,h2,h3,h4{margin:20px 0 12px;font-weight:600;}
+
+/* Markdown 美化 */
+article h1,article h2,article h3,article h4{
+  margin:20px 0 12px;
+  font-weight:600;
+}
 article p{margin:12px 0;}
-article a{color:var(--link);text-decoration:none;}
+article a{color:var(--accent);text-decoration:none;}
 article a:hover{text-decoration:underline;}
-article blockquote{border-left:4px solid var(--accent);padding-left:12px;color:var(--text);
-  background:rgba(240,240,240,0.5);border-radius:6px;margin:15px 0;}
-article pre, article code{background:rgba(245,242,240,0.7);border-radius:6px;padding:6px 10px;font-family:monospace;color:var(--accent);}
-article pre{padding:14px;}
-article img{max-width:100%;margin:15px 0;border-radius:12px;cursor:pointer;opacity:0;transition:opacity 0.5s,transform 0.3s;}
-article img.loaded{opacity:1;}
-#lightbox{
-  position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);
-  display:none;align-items:center;justify-content:center;z-index:9999;overflow:hidden;
+article blockquote{
+  border-left:4px solid var(--accent);
+  padding-left:12px;
+  color:var(--text);
+  background:#f9f9f9;
+  border-radius:6px;
+  margin:15px 0;
 }
-#lightbox .lightbox-inner{display:flex;transition:transform 0.3s ease;width:100%;max-width:900px;}
-#lightbox img{max-width:100%;max-height:90vh;border-radius:12px;flex-shrink:0;}
-#lightbox .close-btn{position:absolute;top:20px;right:20px;font-size:32px;color:#fff;cursor:pointer;z-index:10000;}
-.skeleton{background: var(--skeleton-bg); border-radius: 12px; margin-bottom:12px; position: relative; overflow: hidden; height:16px;}
+article pre, article code{
+  background:#f5f2f0;
+  border-radius:6px;
+  padding:6px 10px;
+  font-family:monospace;
+  overflow-x:auto;
+  color:var(--accent);
+}
+article pre{padding:14px;}
+
+/* 图片 */
+article img{
+  width:100%;
+  max-width:800px;
+  height:auto;
+  margin:15px 0;
+  border-radius:12px;
+  cursor:pointer;
+  opacity:0;
+  transition:opacity 0.5s, transform 0.3s;
+}
+
+/* Lightbox */
+#lightbox{
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.85);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  overflow:hidden;
+}
+#lightbox .lightbox-inner{
+  display:flex;
+  height:100%;
+  transition: transform 0.3s ease;
+}
+#lightbox img{
+  max-width:90%;
+  max-height:90%;
+  object-fit:contain;
+  flex-shrink:0;
+  margin:auto;
+  border-radius:12px;
+}
+
+/* skeleton */
+.skeleton{background:#ddd;border-radius:12px;margin-bottom:12px;height:16px;position:relative;overflow:hidden;}
 .skeleton::before{content:""; display:block; position:absolute; top:0; left:-150px; height:100%; width:150px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation:skeleton-loading 1.2s infinite;}
 @keyframes skeleton-loading{0%{left:-150px;}100%{left:100%;}}
-@media (max-width: 768px){body{padding:12px;}header{flex-direction:column;align-items:flex-start;gap:8px;}article{padding:20px;border-radius:12px;}article h1{font-size:22px;}}
+@media(max-width:768px){body{padding:12px;}header{flex-direction:column;align-items:flex-start;gap:8px;}header h1{font-size:22px;}article{padding:20px;border-radius:12px;}article h1{font-size:22px;}}
 </style>
 </head>
 <body data-theme="light">
@@ -82,29 +148,38 @@ article img.loaded{opacity:1;}
   <div class="skeleton" style="width:80%;height:16px;margin-bottom:6px;"></div>
 </article>
 
-<div id="lightbox">
-  <span class="close-btn">&times;</span>
-  <div class="lightbox-inner"></div>
-</div>
+<!-- Lightbox -->
+<div id="lightbox"><div class="lightbox-inner"></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
+// 主题
 function updateThemeUI(theme){
   document.body.setAttribute('data-theme',theme);
   document.querySelectorAll('.toggle').forEach(btn=>{
-    btn.innerHTML = theme==='dark'? '<i class="bi bi-sun-fill"></i> 浅色模式':'<i class="bi bi-moon-stars"></i> 暗黑模式';
+    if(theme==='dark'){btn.innerHTML='<i class="bi bi-sun-fill"></i> 浅色模式';}
+    else{btn.innerHTML='<i class="bi bi-moon-stars"></i> 暗黑模式';}
   });
 }
-const savedTheme=localStorage.getItem('theme')||'light';updateThemeUI(savedTheme);
-document.querySelectorAll('.toggle').forEach(btn=>btn.addEventListener('click',()=>{
-  const t=document.body.getAttribute('data-theme')==='dark'?'light':'dark';
-  updateThemeUI(t);localStorage.setItem('theme',t);
-}));
+function loadTheme(){
+  const savedTheme=localStorage.getItem('theme')||'light';
+  updateThemeUI(savedTheme);
+}
+loadTheme();
+document.querySelectorAll('.toggle').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const current=document.body.getAttribute('data-theme')==='dark'?'light':'dark';
+    updateThemeUI(current);
+    localStorage.setItem('theme',current);
+  });
+});
 
-function highlightKeyword(text, keyword){ if(!keyword) return text; const regex=new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'); return text.replace(regex,'<mark>$1</mark>'); }
-function getQuery(name){return new URLSearchParams(window.location.search).get(name);}
+// 工具函数
+function highlightKeyword(text,keyword){if(!keyword)return text;const regex=new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');return text.replace(regex,'<mark>$1</mark>');}
+function getQuery(name){const params=new URLSearchParams(window.location.search);return params.get(name);}
 const id=getQuery('id'), keyword=getQuery('keyword')||'', articleEl=document.getElementById('postContent');
 
+// 加载文章
 async function loadPost(){
   try{
     const res=await fetch(`https://api.tang.cafe/api/v1?id=${id}`);
@@ -116,61 +191,44 @@ async function loadPost(){
         <div class="post-date"><i class="bi bi-clock"></i> ${new Date(post.日期).toLocaleDateString()}</div>
         <div class="markdown-body">${highlightKeyword(marked.parse(post.文章内容),keyword)}</div>
       `;
-      initImages();
+
+      // 图片懒加载
+      const imgs=articleEl.querySelectorAll("img");
+      imgs.forEach(img=>{
+        img.loading="lazy";
+        img.addEventListener("load",()=>{img.style.opacity=1;});
+        img.addEventListener("click",()=>openLightbox(imgs, Array.from(imgs).indexOf(img)));
+      });
+
     }else{articleEl.innerHTML='<p>未找到文章</p>';}
   }catch(e){articleEl.innerHTML='<p>加载失败，请稍后重试</p>';}
 }
-
-// ===== 图片懒加载 + Lightbox =====
-function initImages(){
-  const imgs = Array.from(articleEl.querySelectorAll("img"));
-  const lb = document.getElementById("lightbox");
-  const lbInner = lb.querySelector(".lightbox-inner");
-  let idx=0;
-
-  // 懒加载
-  const io = new IntersectionObserver((entries, obs)=>{
-    entries.forEach(en=>{
-      if(en.isIntersecting){
-        const img = en.target;
-        img.src = img.dataset.src || img.src;
-        img.onload=()=>img.classList.add("loaded");
-        obs.unobserve(img);
-      }
-    });
-  }, {rootMargin:"200px"});
-  imgs.forEach((img,i)=>{ img.dataset.src=img.src; img.src=""; io.observe(img); });
-
-  // Lightbox
-  function openLB(i){
-    idx=i; lb.style.display='flex';
-    updateLB();
-  }
-  function updateLB(){
-    lbInner.innerHTML='';
-    imgs.forEach(img=>{
-      const c=document.createElement('img'); c.src=img.src||img.dataset.src; lbInner.appendChild(c);
-    });
-    lbInner.style.transform=`translateX(-${idx*100}%)`;
-  }
-  function next(){ if(idx<imgs.length-1){ idx++; updateLB(); } }
-  function prev(){ if(idx>0){ idx--; updateLB(); } }
-  lb.addEventListener("click", e=>{ if(e.target===lb||e.target.classList.contains('close-btn')) lb.style.display='none'; });
-  document.addEventListener("keydown", e=>{ if(lb.style.display==='flex'){ if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); if(e.key==='Escape') lb.style.display='none'; }});
-
-  let startX=0,endX=0;
-  lb.addEventListener("touchstart", e=>{ if(e.touches.length===1) startX=e.touches[0].clientX; });
-  lb.addEventListener("touchmove", e=>{ if(e.touches.length===1) endX=e.touches[0].clientX; });
-  lb.addEventListener("touchend", ()=>{
-    const diff=endX-startX;
-    if(Math.abs(diff)>50){ if(diff<0) next(); if(diff>0) prev(); }
-    startX=endX=0;
-  });
-
-  imgs.forEach((img,i)=>{ img.addEventListener("click", ()=>openLB(i)); });
-}
-
 loadPost();
+
+// Lightbox 功能
+const lightbox=document.getElementById("lightbox");
+const inner=document.querySelector("#lightbox .lightbox-inner");
+let currentIndex=0;
+function openLightbox(images,index){
+  currentIndex=index;
+  inner.innerHTML='';
+  images.forEach(img=>{
+    const clone=document.createElement("img");
+    clone.src=img.src;
+    inner.appendChild(clone);
+  });
+  lightbox.style.display="flex";
+  updateLightbox();
+}
+function updateLightbox(){inner.style.transform=`translateX(${-currentIndex*100}%)`;}
+lightbox.addEventListener("click",(e)=>{
+  if(e.target===lightbox){lightbox.style.display="none";}
+});
+document.addEventListener("keydown",e=>{
+  if(lightbox.style.display!=="flex")return;
+  if(e.key==="ArrowRight"){currentIndex=Math.min(currentIndex+1,inner.children.length-1);updateLightbox();}
+  if(e.key==="ArrowLeft"){currentIndex=Math.max(currentIndex-1,0);updateLightbox();}
+});
 </script>
 </body>
 </html>
