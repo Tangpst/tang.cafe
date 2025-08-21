@@ -33,6 +33,14 @@ body{
   margin:0;padding:20px;
   transition:background 0.3s,color 0.3s;
   line-height:1.75;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+.content-container {
+  max-width: 1200px;
+  width: 100%;
 }
 header{
   display:flex;
@@ -64,21 +72,26 @@ article{
   box-shadow:0 6px 16px var(--card-shadow);
   color:var(--text);
   overflow:hidden;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 article h1,article h2,article h3,article h4{
   margin:20px 0 12px;
   font-weight:600;
 }
-article p{margin:12px 0;}
-article a{color:var(--accent);text-decoration:none;}
+article h1 { font-size: 2rem; }
+article h2 { font-size: 1.75rem; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+article h3 { font-size: 1.5rem; }
+article p{margin:12px 0; font-size: 1.1rem;}
+article a{color:var(--accent);text-decoration:none; font-weight: 500;}
 article a:hover{text-decoration:underline;}
 article blockquote{
   border-left:4px solid var(--accent);
-  padding-left:12px;
+  padding: 16px 20px;
   color:var(--blockquote-text);
   background:var(--blockquote-bg);
-  border-radius:6px;
-  margin:15px 0;
+  border-radius:0 6px 6px 0;
+  margin:20px 0;
 }
 article pre, article code{
   background:#f5f2f0;
@@ -88,12 +101,17 @@ article pre, article code{
   overflow-x:auto;
   color:var(--accent);
 }
-article pre{padding:14px;}
+article pre{
+  padding:14px;
+  background-color: rgba(0, 123, 255, 0.1);
+  border-left: 3px solid var(--accent);
+}
 article img{
+  display: block;
   width:80%;
   max-width:600px;
   height:auto;
-  margin:15px 0;
+  margin:15px auto;
   border-radius:12px;
   cursor:pointer;
   opacity:0;
@@ -129,25 +147,201 @@ article img{
 .skeleton{background:#ddd;border-radius:12px;margin-bottom:12px;height:16px;position:relative;overflow:hidden;}
 .skeleton::before{content:""; display:block; position:absolute; top:0; left:-150px; height:100%; width:150px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation:skeleton-loading 1.2s infinite;}
 @keyframes skeleton-loading{0%{left:-150px;}100%{left:100%;}}
-@media(max-width:768px){body{padding:12px;}header{flex-direction:column;align-items:flex-start;gap:8px;}header h1{font-size:22px;}article{padding:20px;border-radius:12px;}article h1{font-size:22px;}}
+
+/* 响应式媒体控件 */
+.media-container {
+  margin: 25px 0;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+}
+
+.media-container video, 
+.media-container iframe {
+  display: block;
+  width: 100%;
+  border: none;
+}
+
+.media-controls {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 12px;
+}
+
+.media-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.media-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.media-progress {
+  flex-grow: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  margin: 0 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  width: 0;
+}
+
+.time-display {
+  color: white;
+  font-size: 0.9rem;
+  min-width: 80px;
+  text-align: center;
+  font-family: monospace;
+}
+
+.volume-container {
+  display: flex;
+  align-items: center;
+  margin: 0 5px;
+}
+
+.volume-slider {
+  width: 80px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  position: relative;
+  cursor: pointer;
+}
+
+.volume-level {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: white;
+  border-radius: 3px;
+  width: 70%;
+}
+
+/* 表格样式 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+th {
+  background-color: rgba(0, 123, 255, 0.1);
+  font-weight: 600;
+}
+
+tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* 列表样式 */
+ul, ol {
+  margin: 15px 0;
+  padding-left: 25px;
+}
+
+li {
+  margin: 8px 0;
+  padding-left: 5px;
+}
+
+ul li::marker {
+  color: var(--accent);
+}
+
+/* 代码块样式 */
+code[class*="language-"] {
+  font-size: 0.95rem;
+}
+
+@media(max-width:768px){
+  body{padding:12px;}
+  header{flex-direction:column;align-items:flex-start;gap:8px;}
+  header h1{font-size:22px;}
+  article{padding:20px;border-radius:12px;}
+  article h1{font-size:1.6rem;}
+  article p { font-size: 1rem; }
+  .media-container { margin: 15px 0; }
+  .volume-slider { width: 60px; }
+  .time-display { min-width: 60px; font-size: 0.8rem; }
+  article img {
+    width: 90%;
+  }
+}
+
+@media(max-width:480px){
+  article {
+    padding: 15px;
+  }
+  article h1 { font-size: 1.4rem; }
+  article h2 { font-size: 1.3rem; }
+  .media-controls {
+    padding: 6px 8px;
+  }
+  .media-btn {
+    font-size: 1rem;
+    width: 30px;
+    height: 30px;
+  }
+  .volume-slider {
+    width: 40px;
+  }
+}
 </style>
 </head>
 <body data-theme="light">
-<header>
-  <div class="header-left">
-    <button onclick="window.history.back()"><i class="bi bi-arrow-left-circle"></i> 返回</button>
-  </div>
-  <h1 id="pageTitle"><i class="bi bi-journal-text"></i> 文章详情</h1>
-  <button class="toggle"><i class="bi bi-moon-stars"></i> 暗黑模式</button>
-</header>
+<div class="content-container">
+  <header>
+    <div class="header-left">
+      <button onclick="window.history.back()"><i class="bi bi-arrow-left-circle"></i> 返回</button>
+    </div>
+    <h1 id="pageTitle"><i class="bi bi-journal-text"></i> 文章详情</h1>
+    <button class="toggle"><i class="bi bi-moon-stars"></i> 暗黑模式</button>
+  </header>
 
-<article id="postContent">
-  <div class="skeleton" style="width:60%;height:24px;margin-bottom:12px;"></div>
-  <div class="skeleton" style="width:30%;height:16px;margin-bottom:12px;"></div>
-  <div class="skeleton" style="width:100%;height:16px;margin-bottom:6px;"></div>
-  <div class="skeleton" style="width:90%;height:16px;margin-bottom:6px;"></div>
-  <div class="skeleton" style="width:80%;height:16px;margin-bottom:6px;"></div>
-</article>
+  <article id="postContent">
+    <div class="skeleton" style="width:60%;height:24px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="width:30%;height:16px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="width:100%;height:16px;margin-bottom:6px;"></div>
+    <div class="skeleton" style="width:90%;height:16px;margin-bottom:6px;"></div>
+    <div class="skeleton" style="width:80%;height:16px;margin-bottom:6px;"></div>
+  </article>
+</div>
 
 <div id="lightbox"></div>
 
@@ -178,6 +372,146 @@ function highlightKeyword(text,keyword){if(!keyword)return text;const regex=new 
 function getQuery(name){return new URLSearchParams(window.location.search).get(name);}
 const id=getQuery('id'), keyword=getQuery('keyword')||'', articleEl=document.getElementById('postContent');
 
+// 媒体控件功能
+function createMediaControls(mediaElement) {
+  const container = document.createElement('div');
+  container.className = 'media-container';
+  
+  // 包装原始媒体元素
+  mediaElement.parentNode.insertBefore(container, mediaElement);
+  container.appendChild(mediaElement);
+  
+  // 创建控件UI
+  const controls = document.createElement('div');
+  controls.className = 'media-controls';
+  
+  // 播放/暂停按钮
+  const playBtn = document.createElement('button');
+  playBtn.className = 'media-btn';
+  playBtn.innerHTML = '<i class="bi bi-play-fill"></i>';
+  
+  // 进度条
+  const progressContainer = document.createElement('div');
+  progressContainer.className = 'media-progress';
+  const progressBar = document.createElement('div');
+  progressBar.className = 'progress-bar';
+  progressContainer.appendChild(progressBar);
+  
+  // 时间显示
+  const timeDisplay = document.createElement('div');
+  timeDisplay.className = 'time-display';
+  timeDisplay.textContent = '00:00 / 00:00';
+  
+  // 音量控制
+  const volumeBtn = document.createElement('button');
+  volumeBtn.className = 'media-btn';
+  volumeBtn.innerHTML = '<i class="bi bi-volume-up-fill"></i>';
+  
+  const volumeContainer = document.createElement('div');
+  volumeContainer.className = 'volume-container';
+  
+  const volumeSlider = document.createElement('div');
+  volumeSlider.className = 'volume-slider';
+  const volumeLevel = document.createElement('div');
+  volumeLevel.className = 'volume-level';
+  volumeSlider.appendChild(volumeLevel);
+  
+  volumeContainer.appendChild(volumeBtn);
+  volumeContainer.appendChild(volumeSlider);
+  
+  // 全屏按钮
+  const fullscreenBtn = document.createElement('button');
+  fullscreenBtn.className = 'media-btn';
+  fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i>';
+  
+  // 添加到控件栏
+  controls.appendChild(playBtn);
+  controls.appendChild(progressContainer);
+  controls.appendChild(timeDisplay);
+  controls.appendChild(volumeContainer);
+  controls.appendChild(fullscreenBtn);
+  
+  container.appendChild(controls);
+  
+  // 事件处理
+  playBtn.addEventListener('click', () => {
+    if (mediaElement.paused) {
+      mediaElement.play();
+      playBtn.innerHTML = '<i class="bi bi-pause-fill"></i>';
+    } else {
+      mediaElement.pause();
+      playBtn.innerHTML = '<i class="bi bi-play-fill"></i>';
+    }
+  });
+  
+  mediaElement.addEventListener('play', () => {
+    playBtn.innerHTML = '<i class="bi bi-pause-fill"></i>';
+  });
+  
+  mediaElement.addEventListener('pause', () => {
+    playBtn.innerHTML = '<i class="bi bi-play-fill"></i>';
+  });
+  
+  mediaElement.addEventListener('timeupdate', () => {
+    const percent = (mediaElement.currentTime / mediaElement.duration) * 100;
+    progressBar.style.width = `${percent}%`;
+    
+    const formatTime = (time) => {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
+    
+    timeDisplay.textContent = `${formatTime(mediaElement.currentTime)} / ${formatTime(mediaElement.duration)}`;
+  });
+  
+  progressContainer.addEventListener('click', (e) => {
+    const rect = progressContainer.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    mediaElement.currentTime = percent * mediaElement.duration;
+  });
+  
+  volumeBtn.addEventListener('click', () => {
+    if (mediaElement.volume === 0) {
+      mediaElement.volume = 1;
+      volumeBtn.innerHTML = '<i class="bi bi-volume-up-fill"></i>';
+      volumeLevel.style.width = '100%';
+    } else {
+      mediaElement.volume = 0;
+      volumeBtn.innerHTML = '<i class="bi bi-volume-mute-fill"></i>';
+      volumeLevel.style.width = '0%';
+    }
+  });
+  
+  volumeSlider.addEventListener('click', (e) => {
+    const rect = volumeSlider.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    mediaElement.volume = percent;
+    volumeLevel.style.width = `${percent * 100}%`;
+    
+    if (percent === 0) {
+      volumeBtn.innerHTML = '<i class="bi bi-volume-mute-fill"></i>';
+    } else if (percent < 0.5) {
+      volumeBtn.innerHTML = '<i class="bi bi-volume-down-fill"></i>';
+    } else {
+      volumeBtn.innerHTML = '<i class="bi bi-volume-up-fill"></i>';
+    }
+  });
+  
+  fullscreenBtn.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      container.requestFullscreen().catch(err => {
+        console.error(`全屏请求失败: ${err.message}`);
+      });
+    }
+  });
+  
+  // 初始音量设置
+  volumeLevel.style.width = `${mediaElement.volume * 100}%`;
+}
+
 // 加载文章
 async function loadPost(){
   try{
@@ -185,6 +519,30 @@ async function loadPost(){
     const data=await res.json();
     if(data.success && data.data){
       const post=data.data;
+      
+      // 使用自定义渲染器优化Markdown
+      const renderer = new marked.Renderer();
+      
+      // 优化表格渲染
+      renderer.table = (header, body) => {
+        return `<table><thead>${header}</thead><tbody>${body}</tbody></table>`;
+      };
+      
+      // 优化代码块
+      renderer.code = (code, language) => {
+        const validLang = !language ? '' : language;
+        return `<pre><code class="language-${validLang}">${code}</code></pre>`;
+      };
+      
+      // 设置Marked选项
+      marked.setOptions({
+        renderer,
+        gfm: true,
+        breaks: true,
+        smartLists: true,
+        smartypants: true
+      });
+      
       articleEl.innerHTML=`
         <h1><i class="bi bi-file-earmark-text"></i> ${highlightKeyword(post.标题,keyword)}</h1>
         <div class="post-date"><i class="bi bi-clock"></i> ${new Date(post.日期).toLocaleDateString()}</div>
@@ -212,9 +570,25 @@ async function loadPost(){
       lightbox.addEventListener("click", e=>{
         if(e.target===lightbox){lightbox.classList.remove("show");}
       });
+      
+      // 为视频和音频添加媒体控件
+      const videos = articleEl.querySelectorAll('video');
+      videos.forEach(video => {
+        video.controls = false; // 隐藏原生控件
+        createMediaControls(video);
+      });
+      
+      const audios = articleEl.querySelectorAll('audio');
+      audios.forEach(audio => {
+        audio.controls = false; // 隐藏原生控件
+        createMediaControls(audio);
+      });
 
     }else{articleEl.innerHTML='<p>未找到文章</p>';}
-  }catch(e){articleEl.innerHTML='<p>加载失败，请稍后重试</p>';}
+  }catch(e){
+    console.error(e);
+    articleEl.innerHTML='<p>加载失败，请稍后重试</p>';
+  }
 }
 loadPost();
 </script>
