@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tang.café</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<style>
+<style>  
 :root {
   --bg: linear-gradient(135deg,#f5f7fa,#c3cfe2);
   --text: #111;
@@ -187,6 +187,45 @@ mark {
   font-style: italic;
 }
 
+/* ===== 回到顶部按钮 ===== */
+/* 返回顶部按钮样式 */
+#backToTop {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s, background 0.3s;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+#backToTop.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#backToTop:hover {
+    background: var(--highlight);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* 暗黑模式适配 */
+[data-theme="dark"] #backToTop {
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+}
+
 /* ===== 响应式布局优化 ===== */
 @media (max-width: 768px) {
   body {
@@ -262,7 +301,9 @@ mark {
 <div id="posts"></div>
 <div id="loading">加载中...</div>
 <div id="endOfContent" class="end-of-content" style="display:none;">木有内容了</div>
-
+<button id="backToTop" title="回到顶部">
+    <i class="bi bi-arrow-up-circle-fill"></i>
+</button>
 <script>
 let currentPage=1, pageSize=10, currentKeyword='', hasMore=true;
 const postsContainer=document.getElementById('posts');
@@ -324,7 +365,7 @@ document.querySelectorAll('.toggle').forEach(btn=>{
     });
     window.dispatchEvent(event);
   });
-});
+});   
 
 // ====== 工具函数 ======
 function highlightKeyword(text,keyword){
@@ -439,7 +480,28 @@ window.addEventListener('scroll',()=>{
   }
 });
 
+// 获取返回顶部按钮
+const backToTopBtn = document.getElementById('backToTop');
+
+// 监听滚动事件
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+        backToTopBtn.classList.add('visible');
+    } else {
+        backToTopBtn.classList.remove('visible');
+    }
+});
+
+// 点击按钮返回顶部
+backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
 loadPosts();
 </script>
+
 </body>
 </html>
