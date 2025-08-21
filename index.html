@@ -279,17 +279,50 @@ function updateThemeUI(theme){
       btn.innerHTML='<i class="bi bi-moon-stars"></i> 暗黑模式';
     }
   });
+  
+  // 广播主题变化给其他页面
+  if (window.themeChannel) {
+    window.themeChannel.postMessage({ type: 'THEME_CHANGE', theme: theme });
+  }
 }
 function loadTheme(){
   const savedTheme=localStorage.getItem('theme') || 'light';
   updateThemeUI(savedTheme);
 }
 loadTheme();
+
+// ====== 新增：跨页面主题同步 ======
+// 创建广播通道
+window.themeChannel = new BroadcastChannel('theme_channel');
+
+// 监听其他页面的主题变化
+window.themeChannel.onmessage = (e) => {
+  if (e.data.type === 'THEME_CHANGE') {
+    updateThemeUI(e.data.theme);
+    localStorage.setItem('theme', e.data.theme);
+  }
+};
+
+// 监听storage事件
+window.addEventListener('storage', (e) => {
+  if (e.key === 'theme') {
+    updateThemeUI(e.newValue || 'light');
+  }
+});
+
+// 修改主题切换按钮
 document.querySelectorAll('.toggle').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const current=document.body.getAttribute('data-theme')==='dark'?'light':'dark';
     updateThemeUI(current);
     localStorage.setItem('theme',current);
+    
+    // 强制触发storage事件（兼容方案）
+    const event = new StorageEvent('storage', {
+      key: 'theme',
+      newValue: current
+    });
+    window.dispatchEvent(event);
   });
 });
 
