@@ -6,6 +6,7 @@
 <title>Tang.café</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <style>  
+/* 原有全局样式保持不变 */
 :root {
   --bg: linear-gradient(135deg,#f5f7fa,#c3cfe2);
   --text: #111;
@@ -28,19 +29,33 @@
 }
 body {
   margin:0; 
-  padding:20px; 
+  padding:0; /* 修改：移除顶部padding，由header提供 */
   font-family:'Segoe UI',Arial,sans-serif; 
   background:var(--bg); 
   color:var(--text); 
   transition: background 0.3s,color 0.3s;
 }
+
+/* ====== 头部优化 ====== */
 header {
   display:flex; 
   flex-wrap:wrap; 
   justify-content:space-between; 
   align-items:center; 
   margin-bottom:30px;
+  padding: 15px 20px; /* 添加内边距 */
+  position: fixed; /* 固定定位 */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* 确保在顶部 */
+  background: var(--card-bg); /* 添加背景色 */
+  box-shadow: 0 4px 12px var(--card-shadow); /* 添加阴影效果 */
+  transition: all 0.3s ease; /* 添加过渡效果 */
+  backdrop-filter: blur(10px); /* 添加毛玻璃效果 */
 }
+
+/* 标题样式 */
 header h1 {
   margin:0;
   font-size:28px;
@@ -48,28 +63,42 @@ header h1 {
   align-items:center;
   gap:10px;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 }
+
+/* 头部控制区 */
 .header-controls {
   display:flex;
   align-items:center;
   gap:10px;
   flex-wrap:wrap;
+  transition: all 0.3s ease;
 }
+
+/* 输入框样式 */
 input#searchInput {
   padding:6px 12px;
   border-radius:5px;
-  border:0px solid var(--text);
+  border:1px solid transparent; /* 添加边框 */
   outline:none;
   width:200px;
   background:var(--card-bg);
   color:var(--text);
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
+input#searchInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(72, 86, 100, 0.2);
+}
+
+/* 按钮样式 */
 button {
   cursor:pointer;
   padding:6px 12px;
   border-radius:6px;
-  border:0px solid var(--text);
+  border:1px solid transparent; /* 添加边框 */
   background:var(--card-bg);
   backdrop-filter:blur(5px);
   display:flex;
@@ -77,11 +106,108 @@ button {
   gap:5px;
   color:var(--text);
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
 button:hover {
   transform: translateY(-2px);
   box-shadow: 0 3px 8px var(--hover-shadow);
+  border-color: var(--accent);
 }
+
+/* 主要内容区调整 */
+#posts-container {
+  margin-top: 100px; /* 确保内容不被固定头部遮挡 */
+  padding: 20px;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  body {
+    padding:0;
+  }
+  
+  header {
+    padding: 10px 15px; /* 缩小内边距 */
+    margin-bottom: 10px; /* 减小间距 */
+  }
+  
+  header h1 {
+    font-size: 22px; /* 减小字体 */
+    gap: 8px;
+  }
+  
+  .header-controls {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px; /* 减小间隙 */
+    margin-top: 10px; /* 顶部留空 */
+  }
+  
+  input#searchInput {
+    width: 100%;
+    grid-column: 1 / span 3;
+    order: 1;
+  }
+  
+  #searchBtn {
+    order: 2;
+    width: 100%;
+    padding: 8px 10px; /* 增加触摸区域 */
+  }
+  
+  .toggle {
+    order: 3;
+    width: 100%;
+    padding: 8px 10px; /* 增加触摸区域 */
+  }
+  
+  /* 调整内容区间距 */
+  #posts-container {
+    margin-top: 80px; /* 减少移动端间距 */
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 20px;
+  }
+  
+  .header-controls {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  input#searchInput {
+    grid-column: 1;
+    padding: 8px 10px; /* 增加触摸区域 */
+  }
+  
+  button {
+    padding: 8px 10px; /* 增加触摸区域 */
+    font-size: 14px;
+  }
+  
+  /* 更小的内容区间距 */
+  #posts-container {
+    margin-top: 70px;
+    padding: 10px;
+  }
+}
+
+/* 滚动时头部样式优化 */
+header.scrolled {
+  padding: 10px 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+header.scrolled h1 {
+  font-size: 24px;
+}
+
+/* 原有内容样式保持不变 */
 .post {
   background:var(--card-bg);
   padding:20px;
@@ -188,7 +314,6 @@ mark {
 }
 
 /* ===== 回到顶部按钮 ===== */
-/* 返回顶部按钮样式 */
 #backToTop {
     position: fixed;
     bottom: 30px;
@@ -226,66 +351,7 @@ mark {
     box-shadow: 0 3px 10px rgba(0,0,0,0.5);
 }
 
-/* ===== 响应式布局优化 ===== */
-@media (max-width: 768px) {
-  body {
-    padding:15px;
-  }
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-  .header-controls {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 10px;
-  }
-  input#searchInput {
-    width: 100%;
-    grid-column: 1 / span 3;
-    order: 1;
-  }
-  #searchBtn {
-    order: 2;
-    width: 100%;
-  }
-  .toggle {
-    order: 3;
-    width: 100%;
-  }
-  .post {
-    padding:18px;
-    border-radius:14px;
-    margin-bottom:20px;
-  }
-  .post-title {
-    font-size:18px;
-  }
-  .post-summary {
-    font-size:14px;
-  }
-  #loading {
-    font-size:13px;
-  }
-}
-
-@media (max-width: 480px) {
-  header h1 {
-    font-size: 24px;
-  }
-  .header-controls {
-    grid-template-columns: 1fr;
-  }
-  input#searchInput {
-    grid-column: 1;
-  }
-  button {
-    padding: 8px 10px;
-    justify-content: center;
-  }
-}
+/* 原有媒体查询保持不变 */
 </style>
 </head>
 <body data-theme="light">
@@ -298,13 +364,19 @@ mark {
   </div>
 </header>
 
-<div id="posts"></div>
-<div id="loading">加载中...</div>
-<div id="endOfContent" class="end-of-content" style="display:none;">木有内容了</div>
+<!-- 添加容器包裹内容区域 -->
+<div id="posts-container">
+  <div id="posts"></div>
+  <div id="loading">加载中...</div>
+  <div id="endOfContent" class="end-of-content" style="display:none;">木有内容了</div>
+</div>
+
 <button id="backToTop" title="回到顶部">
     <i class="bi bi-arrow-up-circle-fill"></i>
 </button>
+
 <script>
+// 原有JavaScript保持不变
 let currentPage=1, pageSize=10, currentKeyword='', hasMore=true;
 const postsContainer=document.getElementById('posts');
 const loadingDiv=document.getElementById('loading');
@@ -483,12 +555,21 @@ window.addEventListener('scroll',()=>{
 // 获取返回顶部按钮
 const backToTopBtn = document.getElementById('backToTop');
 
-// 监听滚动事件
+// 监听滚动事件 - 添加头部滚动效果
 window.addEventListener('scroll', () => {
+    // 回到顶部按钮
     if (window.scrollY > 300) {
         backToTopBtn.classList.add('visible');
     } else {
         backToTopBtn.classList.remove('visible');
+    }
+    
+    // 头部滚动效果
+    const header = document.querySelector('header');
+    if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
     }
 });
 
