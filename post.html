@@ -50,9 +50,26 @@ header{
   justify-content:space-between;
   align-items:center;
   margin-bottom:30px;
-  flex-wrap:wrap;
+  flex-wrap:nowrap; /* 禁止换行 */
 }
-header .header-left{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+header .header-left{
+  display:flex;
+  gap:10px;
+  flex-wrap:nowrap; /* 禁止换行 */
+  align-items:center;
+}
+header h1{
+  margin:0;
+  font-size:22px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink: 0;
+  white-space: nowrap; /* 禁止文字换行 */
+  overflow: hidden; /* 隐藏溢出内容 */
+  text-overflow: ellipsis; /* 显示省略号 */
+  max-width: calc(100% - 140px); /* 限制最大宽度，为按钮留出空间 */
+}
 header button{
   cursor:pointer;
   padding:6px 12px;
@@ -295,16 +312,21 @@ code[class*="language-"] {
 @media(max-width:768px){
   body{padding:12px;}
   header{
-    flex-direction: row; /* 修改为横向排列 */
-    align-items: center; /* 居中对齐 */
-    justify-content: space-between; /* 两端对齐 */
-    gap: 8px; /* 添加间隙 */
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap:nowrap; /* 禁止换行 */
   }
   header h1{
-    font-size:18px; /* 缩小标题字体 */
-    flex-grow: 1; /* 允许标题占用剩余空间 */
-    text-align: center; /* 标题居中 */
-    margin: 0 5px; /* 添加边距 */
+    font-size:18px;
+    flex-grow: 1;
+    text-align: center;
+    margin: 0 5px;
+    max-width: calc(100% - 100px); /* 移动端调整最大宽度 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   article{padding:20px;border-radius:12px;}
   article h1{font-size:1.6rem;}
