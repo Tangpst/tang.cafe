@@ -581,35 +581,110 @@ async function loadPost(){
       // 图片懒加载 + Lightbox
       const imgs = articleEl.querySelectorAll("img");
       const lightbox = document.getElementById("lightbox");
-      imgs.forEach(img=>{
+      const imgArray = Array.from(imgs); // 存储所有图片到数组
+      let currentImgIndex = 0; // 当前查看的图片索引
+
+      // 更新lightbox显示的图片
+      function updateLightboxImage(index) {
+        lightbox.innerHTML = '';
+        const clone = document.createElement("img");
+        clone.src = imgArray[index].src;
+        lightbox.appendChild(clone);
+        lightbox.classList.add("show");
+        currentImgIndex = index;
+      }
+
+      imgs.forEach((img, index)=>{
         img.loading="lazy";
         img.addEventListener("load",()=>{img.style.opacity=1;});
         img.addEventListener("click", ()=>{
-          lightbox.innerHTML='';
-          const clone = document.createElement("img");
-          clone.src = img.src;
-          lightbox.appendChild(clone);
-          lightbox.classList.add("show");
+          updateLightboxImage(index);
         });
       });
+
+      // 添加左右滑动功能
       lightbox.addEventListener("click", e=>{
-        if(e.target===lightbox){lightbox.classList.remove("show");}
-      });
-      
-      // 为视频和音频添加媒体控件
-      const videos = articleEl.querySelectorAll('video');
-      videos.forEach(video => {
-        video.controls = false; // 隐藏原生控件
-        createMediaControls(video);
-      });
-      
-      const audios = articleEl.querySelectorAll('audio');
-      audios.forEach(audio => {
-        audio.controls = false; // 隐藏原生控件
-        createMediaControls(audio);
+        if(e.target===lightbox){
+          lightbox.classList.remove("show");
+        }
       });
 
-    }else{articleEl.innerHTML='<p>未找到文章</p>';}
+      // 添加左右箭头按钮
+      function addNavigationButtons() {
+        // 左箭头
+        const leftBtn = document.createElement("button");
+        leftBtn.className = "lightbox-btn left-btn";
+        leftBtn.innerHTML = '<i class="bi bi-arrow-left-circle"></i>';
+        leftBtn.style.position = 'absolute';
+        leftBtn.style.top = '50%';
+        leftBtn.style.left = '20px';
+        leftBtn.style.transform = 'translateY(-50%)';
+        leftBtn.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        leftBtn.style.color = 'white';
+        leftBtn.style.border = 'none';
+        leftBtn.style.borderRadius = '50%';
+        leftBtn.style.width = '50px';
+        leftBtn.style.height = '50px';
+        leftBtn.style.fontSize = '24px';
+        leftBtn.style.cursor = 'pointer';
+        leftBtn.style.zIndex = '10001';
+        leftBtn.addEventListener('click', () => {
+          currentImgIndex = (currentImgIndex - 1 + imgArray.length) % imgArray.length;
+          updateLightboxImage(currentImgIndex);
+        });
+
+        // 右箭头
+        const rightBtn = document.createElement("button");
+        rightBtn.className = "lightbox-btn right-btn";
+        rightBtn.innerHTML = '<i class="bi bi-arrow-right-circle"></i>';
+        rightBtn.style.position = 'absolute';
+        rightBtn.style.top = '50%';
+        rightBtn.style.right = '20px';
+        rightBtn.style.transform = 'translateY(-50%)';
+        rightBtn.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        rightBtn.style.color = 'white';
+        rightBtn.style.border = 'none';
+        rightBtn.style.borderRadius = '50%';
+        rightBtn.style.width = '50px';
+        rightBtn.style.height = '50px';
+        rightBtn.style.fontSize = '24px';
+        rightBtn.style.cursor = 'pointer';
+        rightBtn.style.zIndex = '10001';
+        rightBtn.addEventListener('click', () => {
+          currentImgIndex = (currentImgIndex + 1) % imgArray.length;
+          updateLightboxImage(currentImgIndex);
+        });
+
+        lightbox.appendChild(leftBtn);
+        lightbox.appendChild(rightBtn);
+      }
+      addNavigationButtons();
+
+      // 触摸滑动支持
+      let touchStartX = null;
+      lightbox.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].screenX;
+      }, false);
+
+      lightbox.addEventListener('touchend', (e) => {
+        if (!touchStartX) return;
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchEndX - touchStartX;
+
+        // 检测滑动方向和距离
+        if (diff > 50) {
+          // 向右滑动，显示上一张
+          currentImgIndex = (currentImgIndex - 1 + imgArray.length) % imgArray.length;
+          updateLightboxImage(currentImgIndex);
+        } else if (diff < -50) {
+          // 向左滑动，显示下一张
+          currentImgIndex = (currentImgIndex + 1) % imgArray.length;
+          updateLightboxImage(currentImgIndex);
+        }
+
+        touchStartX = null;
+      }, false);
+  }else{articleEl.innerHTML='<p>未找到文章</p>';}
   }catch(e){
     console.error(e);
     articleEl.innerHTML='<p>加载失败，请稍后重试</p>';

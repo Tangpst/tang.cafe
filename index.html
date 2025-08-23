@@ -38,32 +38,74 @@ body {
 
 /* ====== 头部优化 ====== */
 header {
-  display:flex; 
-  flex-wrap:wrap; 
-  justify-content:space-between; 
-  align-items:center; 
-  margin-bottom:30px; 
-  padding: 15px 20px; /* 添加内边距 */
-  position: fixed; /* 固定定位 */
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  z-index: 1000; /* 确保在顶部 */
-  background: var(--card-bg); /* 添加背景色 */
-  box-shadow: 0 4px 12px var(--card-shadow); /* 添加阴影效果 */
-  transition: all 0.3s ease; /* 添加过渡效果 */
-  backdrop-filter: blur(10px); /* 添加毛玻璃效果 */
+  display:flex;
+  flex-wrap:nowrap; /* 禁止换行 */
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+  padding: 15px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--card-bg);
+  box-shadow: 0 4px 12px var(--card-shadow);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 /* 标题样式 */
 header h1 {
-  margin:0; 
-  font-size:28px; 
-  display:flex; 
-  align-items:center; 
-  gap:10px; 
-  flex-shrink: 0; 
-  transition: all 0.3s ease;
+  margin:0;
+  font-size:28px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink: 0;
+  transition: font-size 0.3s ease; /* 只针对字体大小添加过渡 */
+}
+
+/* 滚动时头部样式优化 */
+header.scrolled {
+  padding: 10px 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+header.scrolled h1 {
+  font-size: 22px !important; /* 确保滚动时标题不会放大 */
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  header {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  header h1 {
+    font-size: 20px !important; /* 强制保持该大小 */
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* 取消移动端的滚动样式变化 */
+  header.scrolled h1 {
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 18px !important; /* 强制保持该大小 */
+  }
+
+  /* 取消移动端的滚动样式变化 */
+  header.scrolled h1 {
+    font-size: 18px !important;
+  }
 }
 
 /* 头部控制区 */
@@ -132,7 +174,7 @@ button {
   cursor:pointer; 
   padding:6px 12px; 
   border-radius:6px; 
-  border:1px solid transparent; /* 添加边框 */
+  border:1px solid transparent; 
   background:var(--card-bg); 
   backdrop-filter:blur(5px); 
   display:flex; 
