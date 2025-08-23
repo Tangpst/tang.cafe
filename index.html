@@ -817,6 +817,8 @@ function doSearch(){
   loadPosts(currentKeyword);
 }
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter') doSearch();});
+// 添加搜索按钮点击事件监听器
+document.getElementById('searchBtn').addEventListener('click', doSearch);
 
 // ====== 无限滚动 ======
 window.addEventListener('scroll',()=>{
