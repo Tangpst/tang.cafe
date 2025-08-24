@@ -187,9 +187,21 @@ article img{
   overflow: hidden;
   margin: 25px 0;
   max-height: 600px; /* 限制播放器高度不超过600px */
+  width: 100%; /* 确保宽度适应容器 */
+}
+
+/* 确保视频画面按比例缩放并完整显示 */
+.plyr__video-wrapper {
+  max-height: calc(600px - 42px); /* 减去控件高度 */
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+}
+
+.plyr__video-wrapper video {
+  object-fit: contain !important; /* 保持比例并完整显示 */
+  max-height: 100%;
+  width: 100%;
 }
 
 /* 使媒体控件居中显示 */
