@@ -74,17 +74,6 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         }
         
-        .section-title {
-            font-size: 22px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #4a6cf7;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
         .form-container {
             flex: 1;
             display: flex;
@@ -227,8 +216,6 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            
-            
         }
         
         .viewer-content {
@@ -251,13 +238,13 @@
         
         .iframe-container {
             flex: 1;
-            min-height: 400px;
             overflow: hidden;
+          
         }
         
         .viewer-iframe {
             width: 100%;
-            height: 100%;
+            height: 650px;
             border: none;
         }
         
@@ -268,37 +255,6 @@
             font-size: 14px;
             color: #666;
             border-top: 1px solid #eee;
-        }
-        
-        .history-container {
-            margin-top: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .history-title {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #4a6cf7;
-        }
-        
-        .history-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .history-item:last-child {
-            border-bottom: none;
-        }
-        
-        .history-content {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
         }
         
         /* 响应式调整 */
@@ -318,10 +274,6 @@
             
             .form-container, .viewer-container {
                 padding: 20px;
-            }
-            
-            .section-title {
-                font-size: 20px;
             }
             
             .viewer-header {
@@ -407,12 +359,9 @@
                         <div class="response-content" id="responseContent"></div>
                         <div class="timestamp" id="timestamp"></div>
                     </div>
-                    
-                
                 </div>
             </div>
             
-           
                 <div class="viewer-container">
                     <div class="viewer-content">
                         <div class="viewer-header">
