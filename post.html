@@ -186,6 +186,15 @@ article img{
   border-radius: 12px;
   overflow: hidden;
   margin: 25px 0;
+  max-height: 600px; /* 限制播放器高度不超过600px */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 使媒体控件居中显示 */
+.plyr__controls {
+  justify-content: center !important;
 }
 
 /* 暗黑模式下的Plyr样式 */
