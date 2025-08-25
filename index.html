@@ -481,13 +481,11 @@ mark {
     height: 50px;
     border-radius: 50%;
     background: var(--accent);
-    color: white;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
     z-index: 1000;
     opacity: 0;
     transform: translateY(20px);
@@ -500,14 +498,16 @@ mark {
     transform: translateY(0);
 }
 
-#backToTop:hover {
-    background: var(--highlight);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+#backToTop svg {
+    width: 24px;
+    height: 24px;
+    fill: white;
+    transition: fill 0.3s;
 }
 
 /* 暗黑模式适配 */
-[data-theme="dark"] #backToTop {
-    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+[data-theme="dark"] #backToTop svg {
+    fill: white;
 }
 
 /* 原有媒体查询保持不变 */
@@ -533,9 +533,7 @@ mark {
   <div id="endOfContent" class="end-of-content" style="display:none;">木有内容了</div>
 </div>
 
-<button id="backToTop" title="回到顶部">
-    <i class="bi bi-arrow-up-circle-fill"></i>
-</button>
+
 
 <script>
 // 恢复isLoading标志
@@ -827,18 +825,8 @@ window.addEventListener('scroll',()=>{
   }
 });
 
-// 获取返回顶部按钮
-const backToTopBtn = document.getElementById('backToTop');
-
 // 监听滚动事件 - 添加头部滚动效果
 window.addEventListener('scroll', () => {
-    // 回到顶部按钮
-    if (window.scrollY > 300) {
-        backToTopBtn.classList.add('visible');
-    } else {
-        backToTopBtn.classList.remove('visible');
-    }
-    
     // 头部滚动效果
     const header = document.querySelector('header');
     if (window.scrollY > 50) {
@@ -848,13 +836,57 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// 点击按钮返回顶部
-backToTopBtn.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+// 初始化回到顶部按钮
+function initBackToTopButton() {
+    // 检查按钮是否已存在
+    let backToTopBtn = document.getElementById('backToTop');
+    if (!backToTopBtn) {
+        // 创建按钮元素
+        backToTopBtn = document.createElement('button');
+        backToTopBtn.id = 'backToTop';
+        document.body.appendChild(backToTopBtn);
+    }
+
+    // 清空按钮内容
+    backToTopBtn.innerHTML = '';
+
+    // 创建SVG图标
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 1024 1024');
+    svg.setAttribute('width', '24');
+    svg.setAttribute('height', '24');
+
+    // 创建路径元素
+    const path1 = document.createElementNS(svgNS, 'path');
+    path1.setAttribute('d', 'M583.68 381.44c-40.96-40.96-104.96-40.96-145.92 0l-145.92 145.92c-20.48 20.48-20.48 51.2 0 71.68 20.48 20.48 51.2 20.48 71.68 0l145.92-145.92 145.92 145.92c20.48 20.48 51.2 20.48 71.68 0 20.48-20.48 20.48-51.2 0-71.68l-143.36-145.92z');
+
+    // 添加路径到SVG
+    svg.appendChild(path1);
+
+    // 添加SVG到按钮
+    backToTopBtn.appendChild(svg);
+
+    // 滚动事件监听
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
     });
-});
+
+    // 点击事件监听
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
+
+// 页面加载完成后初始化
+window.addEventListener('load', initBackToTopButton);
 
 loadPosts();
 </script>
