@@ -530,7 +530,6 @@ async function loadPost(){
 
         touchStartX = null;
       }, false);
-      
       // 初始化Plyr播放器
       setTimeout(() => {
         // 初始化视频和音频播放器
@@ -540,26 +539,29 @@ async function loadPost(){
           load: 'auto'
         });
         
-        // 更新播放器主题
-        function updatePlayerTheme() {
-          const isDark = document.body.getAttribute('data-theme') === 'dark';
-          players.forEach(player => {
-            player.elements.container.classList.toggle('plyr--dark', isDark);
+        // 检查是否有播放器被初始化
+        if (players && players.length > 0) {
+          // 更新播放器主题
+          function updatePlayerTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            players.forEach(player => {
+              player.elements.container.classList.toggle('plyr--dark', isDark);
+            });
+          }
+          
+          // 初始设置主题
+          updatePlayerTheme();
+          
+          // 监听主题变化
+          const observer = new MutationObserver(() => {
+            updatePlayerTheme();
+          });
+          
+          observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['data-theme']
           });
         }
-        
-        // 初始设置主题
-        updatePlayerTheme();
-        
-        // 监听主题变化
-        const observer = new MutationObserver(() => {
-          updatePlayerTheme();
-        });
-        
-        observer.observe(document.body, {
-          attributes: true,
-          attributeFilter: ['data-theme']
-        });
       }, 100);
       
   }else{articleEl.innerHTML='<p>未找到文章</p>';}
