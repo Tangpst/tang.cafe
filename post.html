@@ -451,6 +451,11 @@ async function loadPost(){
 
       // 添加左右箭头按钮
       function addNavigationButtons() {
+        // 检查是否为移动端 (宽度 <= 768px)
+        if (window.innerWidth <= 768) {
+          return; // 在移动端不添加箭头按钮
+        }
+      
         // 左箭头
         const leftBtn = document.createElement("button");
         leftBtn.className = "lightbox-btn left-btn";
@@ -472,7 +477,7 @@ async function loadPost(){
           currentImgIndex = (currentImgIndex - 1 + imgArray.length) % imgArray.length;
           updateLightboxImage(currentImgIndex);
         });
-
+      
         // 右箭头
         const rightBtn = document.createElement("button");
         rightBtn.className = "lightbox-btn right-btn";
@@ -494,7 +499,7 @@ async function loadPost(){
           currentImgIndex = (currentImgIndex + 1) % imgArray.length;
           updateLightboxImage(currentImgIndex);
         });
-
+      
         lightbox.appendChild(leftBtn);
         lightbox.appendChild(rightBtn);
       }
@@ -562,6 +567,18 @@ async function loadPost(){
     articleEl.innerHTML='<p>加载失败，请稍后重试</p>';
   }
 }
+// 监听窗口大小变化
+window.addEventListener('resize', () => {
+  // 如果lightbox当前显示中
+  if (lightbox.classList.contains('show')) {
+    // 重新创建导航按钮
+    lightbox.innerHTML = '';
+    const clone = document.createElement("img");
+    clone.src = imgArray[currentImgIndex].src;
+    lightbox.appendChild(clone);
+    addNavigationButtons();
+  }
+});
 loadPost();
 </script>
 </body>
