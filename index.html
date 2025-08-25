@@ -124,7 +124,7 @@ header.scrolled {
 }
 
 header.scrolled h1 {
-  font-size: 22px !important; /* 确保滚动时标题不会放大 */
+  font-size: 22px; /* 修改：确保滚动时标题也不放大 */
 }
 
 /* 响应式优化 */
@@ -230,22 +230,6 @@ button#searchBtn:disabled {
 @keyframes fadeIn {
   from { opacity: 0; width: 0; } 
   to { opacity: 1; width: 200px; }
-}
-
-/* 按钮样式 */
-button {
-  cursor:pointer; 
-  padding:6px 12px; 
-  border-radius:6px; 
-  border:1px solid transparent; 
-  background:var(--card-bg); 
-  backdrop-filter:blur(5px); 
-  display:flex; 
-  align-items:center; 
-  gap:5px; 
-  color:var(--text); 
-  transition: all 0.3s ease; 
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 button:hover {
@@ -827,7 +811,6 @@ window.addEventListener('scroll',()=>{
     loadPosts(currentKeyword);
   }
 });
-
 // 监听滚动事件 - 添加头部滚动效果
 window.addEventListener('scroll', () => {
     // 头部滚动效果
