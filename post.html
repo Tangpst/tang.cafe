@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>文章详情</title>
@@ -11,6 +11,34 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.css" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* 添加头部过渡效果 */
+header {
+  transition: all 0.3s ease;
+  padding: 15px 20px; /* 增加初始内边距 */
+}
+
+/* 滚动时缩小的头部样式 */
+header.scrolled {
+  padding: 8px 15px; /* 缩小内边距 */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 添加阴影增强效果 */
+}
+
+header.scrolled h1 {
+  font-size: 18px; /* 标题字体缩小 */
+  transform: scale(0.9); /* 轻微缩小 */
+  transform-origin: center left; /* 以左侧为中心缩小 */
+}
+
+header.scrolled button {
+  padding: 5px 10px; /* 按钮内边距缩小 */
+  font-size: 0.9em; /* 按钮文字缩小 */
+}
+
+header.scrolled .header-left {
+  gap: 6px; /* 缩小元素间距 */
+}
+
+/* 原有样式保持不变 */
 :root{
   --bg:linear-gradient(135deg,#f5f7fa,#c3cfe2);
   --text:#111;
@@ -310,6 +338,20 @@ code[class*="language-"] {
     margin: 15px auto; /* 改为auto使播放器居中 */
     width: 90%; /* 移动端宽度调整为90% */
   }
+  
+  /* 移动端滚动效果更明显 */
+  header.scrolled {
+    padding: 5px 10px;
+  }
+  
+  header.scrolled h1 {
+    font-size: 16px;
+    transform: scale(0.85);
+  }
+  
+  header.scrolled button {
+    padding: 4px 8px;
+  }
 }
 
 @media(max-width:480px){
@@ -320,6 +362,11 @@ code[class*="language-"] {
   article h2 { font-size: 1.3rem; }
   header h1 {
     font-size: 16px; /* 进一步缩小标题 */
+  }
+  
+  /* 移动端滚动效果 */
+  header.scrolled h1 {
+    font-size: 14px;
   }
 }
 </style>
@@ -349,6 +396,25 @@ code[class*="language-"] {
 <!-- 引入Plyr JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.polyfilled.min.js"></script>
 <script>
+// 添加滚动监听实现头部缩小效果
+function initHeaderScrollEffect() {
+  const header = document.querySelector('header');
+  const scrollThreshold = 60; // 滚动多少距离后开始缩小
+  
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > scrollThreshold) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  });
+  
+  // 初始检查
+  if (window.scrollY > scrollThreshold) {
+    header.classList.add('scrolled');
+  }
+}
+
 // 主题切换
 function updateThemeUI(theme){
   document.body.setAttribute('data-theme',theme);
@@ -539,7 +605,7 @@ async function loadPost(){
           load: 'auto'
         });
         
-        // 检查是否有播放器被初始化
+        // 先检查players是否存在，再检查长度
         if (players && players.length > 0) {
           // 更新播放器主题
           function updatePlayerTheme() {
@@ -573,6 +639,7 @@ async function loadPost(){
 // 监听窗口大小变化
 window.addEventListener('resize', () => {
   // 如果lightbox当前显示中
+  const lightbox = document.getElementById('lightbox');
   if (lightbox.classList.contains('show')) {
     // 重新创建导航按钮
     lightbox.innerHTML = '';
@@ -582,6 +649,11 @@ window.addEventListener('resize', () => {
     addNavigationButtons();
   }
 });
+
+// 初始化头部滚动效果
+initHeaderScrollEffect();
+
+// 加载文章内容
 loadPost();
 </script>
 </body>
