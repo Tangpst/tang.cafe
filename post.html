@@ -329,7 +329,7 @@ code[class*="language-"] {
     <div class="header-left">
       <button onclick="window.history.back()"><i class="bi bi-arrow-left-circle"></i> <span class="btn-text">返回</span></button>
     </div>
-    <h1 id="pageTitle"><i class="bi bi-journal-text"></i> 文章详情</h1>
+    <h1 id="pageTitle">Tang.café</h1>
     <button class="toggle"><i class="bi bi-moon-stars"></i> <span class="btn-text">暗黑模式</span></button>
   </header>
 
@@ -415,7 +415,7 @@ async function loadPost(){
 
       // 设置页面标题
       document.title = post.标题;
-      document.getElementById('pageTitle').innerHTML = `<i class="bi bi-journal-text"></i> ${post.标题}`;
+      document.getElementById('pageTitle').innerHTML = `${post.标题}`;
 
       // 图片懒加载 + Lightbox
       const imgs = articleEl.querySelectorAll("img");
@@ -431,6 +431,7 @@ async function loadPost(){
         lightbox.appendChild(clone);
         lightbox.classList.add("show");
         currentImgIndex = index;
+        addNavigationButtons(); // 更新图片后重新添加导航按钮
       }
 
       imgs.forEach((img, index)=>{
