@@ -53,6 +53,21 @@ header{
   align-items:center;
   margin-bottom:30px;
   flex-wrap:nowrap; /* 禁止换行 */
+  position: fixed; /* 固定定位 */
+  top: 0; /* 距离顶部0 */
+  left: 0; /* 距离左侧0 */
+  right: 0; /* 距离右侧0 */
+  background: var(--bg); /* 背景与页面一致 */
+  padding: 10px 20px; /* 添加内边距 */
+  z-index: 1000; /* 确保在其他元素上方 */
+  backdrop-filter: blur(5px); /* 添加毛玻璃效果 */
+}
+
+/* 同时需要调整内容容器的上边距，避免被固定的header遮挡 */
+.content-container {
+  max-width: 1200px;
+  width: 100%;
+  margin-top: 70px; /* 增加上边距，值略大于header的高度 */
 }
 header .header-left{
   display:flex;
@@ -170,29 +185,20 @@ article img{
 .skeleton::before{content:""; display:block; position:absolute; top:0; left:-150px; height:100%; width:150px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation:skeleton-loading 1.2s infinite;}
 @keyframes skeleton-loading{0%{left:-150px;}100%{left:100%;}}
 
-/* 响应式媒体控件 */
-.media-container {
-  margin: 25px 0;
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  background: rgba(0, 0, 0, 0.05);
-  max-width: 100%;
-}
 
 /* Plyr播放器样式调整 */
 .plyr {
   border-radius: 12px;
   overflow: hidden;
-  margin: 25px 0;
-  max-height: 600px; /* 限制播放器高度不超过600px */
-  width: 100%; /* 确保宽度适应容器 */
+  margin: auto;
+  max-height: 100%; 
+  min-height: 100%;
+  width: 40%; /* 确保宽度适应容器 */
 }
 
 /* 确保视频画面按比例缩放并完整显示 */
 .plyr__video-wrapper {
-  max-height: calc(600px - 42px); /* 减去控件高度 */
+  max-height: 100%; /* 减去控件高度 */
   display: flex;
   align-items: center;
   justify-content: center;
