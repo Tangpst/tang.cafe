@@ -218,14 +218,7 @@ button {
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* 搜索按钮禁用状态 */
-button#searchBtn:disabled {
-  opacity: 0.5; 
-  cursor: not-allowed; 
-  transform: none; 
-  box-shadow: none; 
-  border-color: transparent;
-}
+
 
 @keyframes fadeIn {
   from { opacity: 0; width: 0; } 
@@ -238,12 +231,6 @@ button:hover {
   border-color: var(--accent);
 }
 
-/* 主题切换按钮样式 */
-#themeToggle {
-  padding:6px; 
-  min-width: 40px; 
-  justify-content: center;
-}
 
 /* 搜索按钮样式 */
 #searchBtn {
@@ -341,16 +328,6 @@ button:hover {
     margin-top: 70px;
     padding: 10px;
   }
-}
-
-/* 滚动时头部样式优化 */
-header.scrolled {
-  padding: 10px 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-header.scrolled h1 {
-  font-size: 22px; /* 修改：确保滚动时标题也不放大 */
 }
 
 /* 原有内容样式保持不变 */
@@ -497,6 +474,23 @@ mark {
     fill: white;
 }
 
+/* 加载中旋转图标动画 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+/* 暗黑模式适配 */
+[data-theme="dark"] .spinner {
+  color: var(--accent);
+}
+
 /* 原有媒体查询保持不变 */
 </style>
 </head>
@@ -516,8 +510,8 @@ mark {
 <!-- 添加容器包裹内容区域 -->
 <div id="posts-container">
   <div id="posts"></div>
-  <div id="loading">加载中...</div>
-  <div id="endOfContent" class="end-of-content" style="display:none;">木有内容了</div>
+  <div id="loading">😵<i class="bi bi-arrow-repeat spinner"></i>疯狂加载中😵</div>
+  <div id="endOfContent" class="end-of-content" style="display:none;">到底了，别拉了😅</div>
 </div>
 
 
@@ -532,6 +526,7 @@ const siteTitle = document.getElementById('siteTitle');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const clearSearchBtn = document.getElementById('clearSearchBtn'); // 新增
+
 
 // ====== 清除按钮功能 ======
 function updateClearButtonVisibility() {
@@ -635,37 +630,22 @@ siteTitle.addEventListener('mouseout', () => {
 
 // ====== 主题持久化 & 图标文字同步 ======
 function updateThemeUI(theme){
-  document.body.setAttribute('data-theme',theme);
-  document.querySelectorAll('.toggle').forEach(btn=>{
-    if(theme==='dark'){
+  document.body.setAttribute('data-theme', theme);
+  document.querySelectorAll('.toggle').forEach(btn => {
+    if(theme === 'dark'){
       btn.innerHTML='<i class="bi bi-sun-fill"></i><span> 浅色模式</span>';
-    }else{
+    } else {
       btn.innerHTML='<i class="bi bi-moon-stars"></i><span> 暗黑模式</span>';
     }
   });
-  
-  // 广播主题变化给其他页面
-  if (window.themeChannel) {
-    window.themeChannel.postMessage({ type: 'THEME_CHANGE', theme: theme });
-  }
 }
+
 function loadTheme(){
-  const savedTheme=localStorage.getItem('theme') || 'light';
+  const savedTheme = localStorage.getItem('theme') || 'light';
   updateThemeUI(savedTheme);
 }
+
 loadTheme();
-
-// ====== 新增：跨页面主题同步 ======
-// 创建广播通道
-window.themeChannel = new BroadcastChannel('theme_channel');
-
-// 监听其他页面的主题变化
-window.themeChannel.onmessage = (e) => {
-  if (e.data.type === 'THEME_CHANGE') {
-    updateThemeUI(e.data.theme);
-    localStorage.setItem('theme', e.data.theme);
-  }
-};
 
 // 监听storage事件
 window.addEventListener('storage', (e) => {
@@ -675,18 +655,11 @@ window.addEventListener('storage', (e) => {
 });
 
 // 修改主题切换按钮
-document.querySelectorAll('.toggle').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const current=document.body.getAttribute('data-theme')==='dark'?'light':'dark';
+document.querySelectorAll('.toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const current = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     updateThemeUI(current);
-    localStorage.setItem('theme',current);
-    
-    // 强制触发storage事件（兼容方案）
-    const event = new StorageEvent('storage', {
-      key: 'theme',
-      newValue: current
-    });
-    window.dispatchEvent(event);
+    localStorage.setItem('theme', current);
   });
 });   
 
@@ -805,53 +778,38 @@ document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==
 // 添加搜索按钮点击事件监听器
 document.getElementById('searchBtn').addEventListener('click', doSearch);
 
-// ====== 无限滚动 ======
+// ====== 滚动事件处理 ======
 window.addEventListener('scroll',()=>{
+  // 无限滚动
   if(hasMore && !isLoading && window.innerHeight + window.scrollY >= document.body.offsetHeight - 50){
     loadPosts(currentKeyword);
   }
-});
-// 监听滚动事件 - 添加头部滚动效果
-window.addEventListener('scroll', () => {
-    // 头部滚动效果
-    const header = document.querySelector('header');
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
+
+  // 头部滚动效果
+  const header = document.querySelector('header');
+  if (window.scrollY > 50) {
+      header.classList.add('scrolled');
+  } else {
+      header.classList.remove('scrolled');
+  }
 });
 
 // 初始化回到顶部按钮
 function initBackToTopButton() {
-    // 检查按钮是否已存在
+    // 创建按钮元素（如果不存在）
     let backToTopBtn = document.getElementById('backToTop');
     if (!backToTopBtn) {
-        // 创建按钮元素
         backToTopBtn = document.createElement('button');
         backToTopBtn.id = 'backToTop';
         document.body.appendChild(backToTopBtn);
     }
 
-    // 清空按钮内容
-    backToTopBtn.innerHTML = '';
-
-    // 创建SVG图标
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('viewBox', '0 0 1024 1024');
-    svg.setAttribute('width', '24');
-    svg.setAttribute('height', '24');
-
-    // 创建路径元素
-    const path1 = document.createElementNS(svgNS, 'path');
-    path1.setAttribute('d', 'M351.957333 1015.893333a31.914667 31.914667 0 0 1-31.573333-26.709333L228.864 439.893333H159.957333a32 32 0 0 1 0-64h65.834667a288.213333 288.213333 0 0 1 328.277333-252.928l7.594667-38.869333A95.829333 95.829333 0 0 1 682.154667 11.904l158.677333 45.226667c8.234667 2.346667 15.061333 7.765333 19.2 15.232s5.162667 16.128 2.816 24.32a32.128 32.128 0 0 1-39.594667 22.016l-158.677333-45.226667a32.256 32.256 0 0 0-9.045333-1.28 32.170667 32.170667 0 0 0-31.146667 25.045333l-8.234667 42.24a290.816 290.816 0 0 1 182.144 236.458667h65.792a32 32 0 0 1 0 64H796.586667l-60.842667 547.541333a32 32 0 0 1-31.829333 28.458667H351.957333z m323.370667-64l28.458667-256h-367.36l42.666666 256h296.234667z m35.541333-320l21.333334-192h-174.805334l-37.461333 192h190.933333z m-256.128 0l37.461334-192H293.717333l32 192h129.024z m278.912-256a223.658667 223.658667 0 0 0-130.090666-172.373333l-33.621334 172.373333h163.712z m-228.949333 0l37.077333-190.037333A224.512 224.512 0 0 0 290.346667 375.893333h214.357333z');
-
-    // 添加路径到SVG
-    svg.appendChild(path1);
-
-    // 添加SVG到按钮
-    backToTopBtn.appendChild(svg);
+    // 设置按钮内容
+    backToTopBtn.innerHTML = `
+        <svg viewBox="0 0 1024 1024" width="24" height="24">
+            <path d="M351.957333 1015.893333a31.914667 31.914667 0 0 1-31.573333-26.709333L228.864 439.893333H159.957333a32 32 0 0 1 0-64h65.834667a288.213333 288.213333 0 0 1 328.277333-252.928l7.594667-38.869333A95.829333 95.829333 0 0 1 682.154667 11.904l158.677333 45.226667c8.234667 2.346667 15.061333 7.765333 19.2 15.232s5.162667 16.128 2.816 24.32a32.128 32.128 0 0 1-39.594667 22.016l-158.677333-45.226667a32.256 32.256 0 0 0-9.045333-1.28 32.170667 32.170667 0 0 0-31.146667 25.045333l-8.234667 42.24a290.816 290.816 0 0 1 182.144 236.458667h65.792a32 32 0 0 1 0 64H796.586667l-60.842667 547.541333a32 32 0 0 1-31.829333 28.458667H351.957333z m323.370667-64l28.458667-256h-367.36l42.666666 256h296.234667z m35.541333-320l21.333334-192h-174.805334l-37.461333 192h190.933333z m-256.128 0l37.461334-192H293.717333l32 192h129.024z m278.912-256a223.658667 223.658667 0 0 0-130.090666-172.373333l-33.621334 172.373333h163.712z m-228.949333 0l37.077333-190.037333A224.512 224.512 0 0 0 290.346667 375.893333h214.357333z"/>
+        </svg>
+    `;
 
     // 滚动事件监听
     window.addEventListener('scroll', () => {
@@ -864,10 +822,7 @@ function initBackToTopButton() {
 
     // 点击事件监听
     backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
 
@@ -876,7 +831,6 @@ window.addEventListener('load', initBackToTopButton);
 
 loadPosts();
 </script>
-
 </body>
 </html>
 
