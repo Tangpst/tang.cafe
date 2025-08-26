@@ -425,7 +425,7 @@ code[class*="language-"] {
 <div class="content-container">
   <header>
     <div class="header-left">
-      <button onclick="window.history.back()"><i class="bi bi-arrow-left-circle"></i> <span class="btn-text">返回</span></button>
+      <button onclick="navigateBack()"><i class="bi bi-arrow-left-circle"></i> <span class="btn-text">返回</span></button>
     </div>
     <h1 id="pageTitle">Tang.café</h1>
     <button class="toggle"><i class="bi bi-moon-stars"></i> <span class="btn-text">暗黑模式</span></button>
@@ -503,6 +503,11 @@ document.querySelectorAll('.toggle').forEach(btn=>{
 // 工具函数
 function highlightKeyword(text,keyword){if(!keyword)return text;const regex=new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');return text.replace(regex,'<mark>$1</mark>');}
 function getQuery(name){return new URLSearchParams(window.location.search).get(name);}
+
+// 新增返回函数
+function navigateBack() {
+  window.location.href = './';
+}
 const id=getQuery('id'), keyword=getQuery('keyword')||'', articleEl=document.getElementById('postContent');
 const prevBtn = document.getElementById('prevPost');
 const nextBtn = document.getElementById('nextPost');
