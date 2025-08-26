@@ -274,10 +274,6 @@ th {
   font-weight: 600;
 }
 
-tr:hover {
-  background-color: rgba(0, 123, 255, 0.05);
-}
-
 /* 列表样式 */
 ul, ol {
   margin: 15px 0;
@@ -298,7 +294,51 @@ code[class*="language-"] {
   font-size: 0.95rem;
 }
 
-@media(max-width:768px){
+/* 添加上一篇下一篇导航样式 */
+.navigation { 
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.nav-button:hover {
+  background: var(--accent);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.nav-button.hidden {
+  display: none;
+}
+
+.nav-button i {
+  font-size: 18px;
+}
+
+@media(max-width:768px) {
   body{padding:12px;}
   header{
     flex-direction: row;
@@ -352,6 +392,16 @@ code[class*="language-"] {
   header.scrolled button {
     padding: 4px 8px;
   }
+  
+  /* 移动端导航样式 */
+  .navigation {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .nav-button {
+    justify-content: center;
+  }
 }
 
 @media(max-width:480px){
@@ -388,6 +438,18 @@ code[class*="language-"] {
     <div class="skeleton" style="width:90%;height:16px;margin-bottom:6px;"></div>
     <div class="skeleton" style="width:80%;height:16px;margin-bottom:6px;"></div>
   </article>
+  
+  <!-- 添加导航按钮容器 -->
+  <div class="navigation">
+    <button id="prevPost" class="nav-button hidden">
+      <i class="bi bi-arrow-left"></i>
+      <span class="btn-text">上一篇</span>
+    </button>
+    <button id="nextPost" class="nav-button hidden">
+      <span class="btn-text">下一篇</span>
+      <i class="bi bi-arrow-right"></i>
+    </button>
+  </div>
 </div>
 
 <div id="lightbox"></div>
@@ -442,9 +504,66 @@ document.querySelectorAll('.toggle').forEach(btn=>{
 function highlightKeyword(text,keyword){if(!keyword)return text;const regex=new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');return text.replace(regex,'<mark>$1</mark>');}
 function getQuery(name){return new URLSearchParams(window.location.search).get(name);}
 const id=getQuery('id'), keyword=getQuery('keyword')||'', articleEl=document.getElementById('postContent');
+const prevBtn = document.getElementById('prevPost');
+const nextBtn = document.getElementById('nextPost');
+let allPosts = []; // 存储所有文章的ID和标题
+
+// 加载所有文章的ID（用于导航）
+async function loadAllPostIds() {
+  try {
+    const res = await fetch('https://api.tang.cafe/api/v1?pagenum=1&pageSize=1000'); // 获取所有文章（假设不超过1000篇）
+    const data = await res.json();
+    if (data.success && data.data) {
+      // 按日期排序（最新的在前）
+      allPosts = data.data.sort((a, b) => new Date(b.日期) - new Date(a.日期))
+        .map(post => ({ id: post.填写ID, title: post.标题 }));
+      
+      // 设置导航按钮状态
+      updateNavigationButtons();
+    }
+  } catch(e) {
+    console.error('加载文章列表失败:', e);
+  }
+}
+
+// 更新导航按钮状态
+function updateNavigationButtons() {
+  const currentIndex = allPosts.findIndex(post => post.id === id);
+  
+  if (currentIndex === -1) {
+    // 当前文章不在列表中，隐藏所有导航按钮
+    prevBtn.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    return;
+  }
+  
+  // 设置上一篇按钮
+  if (currentIndex > 0) {
+    const prevPost = allPosts[currentIndex - 1];
+    prevBtn.classList.remove('hidden');
+    prevBtn.onclick = () => {
+      window.location.href = `post.html?id=${prevPost.id}${keyword ? '&keyword=' + encodeURIComponent(keyword) : ''}`;
+    };
+    prevBtn.title = `上一篇: ${prevPost.title}`;
+  } else {
+    prevBtn.classList.add('hidden'); // 第一篇文章，隐藏上一篇按钮
+  }
+  
+  // 设置下一篇按钮
+  if (currentIndex < allPosts.length - 1) {
+    const nextPost = allPosts[currentIndex + 1];
+    nextBtn.classList.remove('hidden');
+    nextBtn.onclick = () => {
+      window.location.href = `post.html?id=${nextPost.id}${keyword ? '&keyword=' + encodeURIComponent(keyword) : ''}`;
+    };
+    nextBtn.title = `下一篇: ${nextPost.title}`;
+  } else {
+    nextBtn.classList.add('hidden'); // 最后一篇文章，隐藏下一篇按钮
+  }
+}
 
 // 加载文章
-async function loadPost(){
+async function loadPost() {
   try{
     const res=await fetch(`https://api.tang.cafe/api/v1?id=${id}`);
     const data=await res.json();
@@ -629,6 +748,9 @@ async function loadPost(){
           });
         }
       }, 100);
+      
+      // 加载完成后获取所有文章ID用于导航
+      loadAllPostIds();
       
   }else{articleEl.innerHTML='<p>未找到文章</p>';}
   }catch(e){

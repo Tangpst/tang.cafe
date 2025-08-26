@@ -631,12 +631,15 @@
                             '<i class="fas fa-check-circle"></i> 提交成功';
                         responseTitle.style.color = '#28a745';
                         
-                        // 如果是更新操作，清空表单并切换回新增模式
+                        // 如果是更新操作，保留表单数据和更新模式
                         if (isUpdateMode) {
+                            // 不重置表单，保持当前数据
+                            // 不切换到新增模式
+                        } else {
+                            // 新增模式下重置表单
                             document.getElementById('articleForm').reset();
                             document.getElementById('date').value = today;
                             document.getElementById('auth').value = auth;
-                            addModeBtn.click();
                         }
                     } else {
                         responseContainer.className = 'response-container error';
