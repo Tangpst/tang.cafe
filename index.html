@@ -241,7 +241,13 @@ async function loadPosts(keyword='') {
   endOfContentDiv.style.display='none';
   
   try {
-    const res = await fetch(`https://api.tang.cafe/api/v1?pagenum=${currentPage}&pageSize=${pageSize}&keyword=${encodeURIComponent(keyword)}`);
+    // 构建URL - 只有在有keyword时才添加keyword参数
+    let url = `https://api.tang.cafe/api/v1?pagenum=${currentPage}&pageSize=${pageSize}`;
+    if (keyword) {
+      url += `&keyword=${encodeURIComponent(keyword)}`;
+    }
+    
+    const res = await fetch(url);
     const data = await res.json();
     loadingDiv.style.display='none';
     document.querySelectorAll('.skeleton').forEach(s=>s.parentNode.remove());
@@ -251,8 +257,15 @@ async function loadPosts(keyword='') {
         const div=document.createElement('div');
         div.className='post';
         div.style.transitionDelay=`${index*100}ms`;
+        
+        // 构建文章链接 - 只有在有keyword时才添加keyword参数
+        let postUrl = `post.html?id=${post.填写ID}`;
+        if (keyword) {
+          postUrl += `&keyword=${encodeURIComponent(keyword)}`;
+        }
+        
         div.innerHTML=`
-          <div class="post-title" onclick="window.location.href='post.html?id=${post.填写ID}&keyword=${encodeURIComponent(keyword)}'">
+          <div class="post-title" onclick="window.location.href='${postUrl}'">
             <i class="bi bi-file-earmark-text"></i> ${highlightKeyword(post.标题,keyword)}
           </div>
           <div class="post-date"><i class="bi bi-clock"></i> ${new Date(post.日期).toLocaleDateString()}</div>

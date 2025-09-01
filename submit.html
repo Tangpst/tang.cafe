@@ -433,8 +433,12 @@
                                     <i class="fas fa-image"></i> 插入图片
                                 </button>
                                 <button type="button" id="insertMediaBtn" class="btn" style="width: auto; padding: 3px 16px; font-size: 14px; background: #18e0bf;">  
-                                    <i class="fas fa-video"></i> 插入媒体
+                                    <i class="fas fa-video"></i> 插入视频
                                 </button>
+                                <button type="button" id="insertMusicBtn" class="btn" style="width: auto; padding: 3px 16px; font-size: 14px; background: #0cc2da;">
+                                    <i class="fas fa-music"></i> 插入音乐
+                                </button>
+
                             </div>
                             </label>
                             
@@ -574,6 +578,20 @@
                 const textBefore = contentTextarea.value.substring(0, cursorPos);
                 const textAfter = contentTextarea.value.substring(cursorPos);
                 const mediaHtml = '<video Width="50%" controls>\n\n  <source src="https://pub.tang.cafe/媒体文件名" type="video/mp4">\n</video>';
+                contentTextarea.value = textBefore + mediaHtml + textAfter;
+                // 将光标移动到插入内容的末尾
+                contentTextarea.selectionStart = cursorPos + mediaHtml.length;
+                contentTextarea.selectionEnd = cursorPos + mediaHtml.length;
+                contentTextarea.focus();
+            });
+
+               // 新增音乐插入按钮事件
+            document.getElementById('insertMusicBtn').addEventListener('click', function() {
+                const contentTextarea = document.getElementById('content');
+                const cursorPos = contentTextarea.selectionStart;
+                const textBefore = contentTextarea.value.substring(0, cursorPos);
+                const textAfter = contentTextarea.value.substring(cursorPos);
+                const mediaHtml = '<audio controls autoplay><source src="https://pub.tang.cafe/音乐文件名" type="audio/mpeg"></audio>';
                 contentTextarea.value = textBefore + mediaHtml + textAfter;
                 // 将光标移动到插入内容的末尾
                 contentTextarea.selectionStart = cursorPos + mediaHtml.length;
